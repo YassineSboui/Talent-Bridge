@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="DW_DataJobs"
+  DTS:DTSID="{C0DE0001-DB01-4000-8000-000000000001}"
+  DTS:Description="OLE DB connection to DW_DataJobs on localhost (Windows Auth)"
+  DTS:CreationName="OLEDB">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectionString="Data Source=localhost;Initial Catalog=DW_DataJobs;Provider=MSOLEDBSQL;Integrated Security=SSPI;Auto Translate=False;Application Name=SSIS_DW_DataJobs;Connect Timeout=60;" />
+  </DTS:ObjectData>
+</DTS:ConnectionManager>
