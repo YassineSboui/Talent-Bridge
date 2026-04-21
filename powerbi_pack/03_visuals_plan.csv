@@ -1,0 +1,24 @@
+Page,Visual,Fields,Notes
+Executive,KPI Card,Total Jobs,Target baseline: 785741
+Executive,KPI Card,Salary Coverage %,Target baseline: 4.16%
+Executive,KPI Card,Remote Share %,Target baseline: 8.85%
+Executive,KPI Card,Health Insurance %,Quality signal
+Executive,Line Chart,Axis=dim.date.full_date; Values=Total Jobs,Set x-axis to continuous month
+Executive,Clustered Bar,Axis=dim.job_category.category_name; Values=Total Jobs,Top categories by volume
+Executive,Map,Location=dim.location.country; Size=Total Jobs,Use Filled Map if needed
+Executive,Bar,Axis=dim.job_portal.portal_name; Values=Total Jobs,Apply Top N 10
+Salary,Card,Avg Salary Year,Salary-only rows via measure
+Salary,Card,Median Salary Year,Robust to outliers
+Salary,Card,Remote Salary Premium %,Compare remote vs onsite
+Salary,Matrix,Rows=category_name; Columns=country; Values=Avg Salary Year|Median Salary Year|Jobs With Salary,Main salary policy table
+Recruitment,Stacked Bar,Axis=schedule_type_name; Legend=category_name; Values=Jobs In Schedule Context,Schedule mix by job family
+Recruitment,Heatmap Matrix,Rows=country; Columns=portal_name; Values=Total Jobs,Use conditional formatting
+Recruitment,Card,Top Portal Share %,Concentration risk KPI
+Skills,Card,Skill Mentions,Total mentions in bridge
+Skills,Card,Distinct Skills,Unique skill count
+Skills,Card,Avg Skills per Job,Demand intensity
+Skills,Bar,Axis=skill_name; Values=Skill Mentions,Top N 20
+Skills,Treemap,Group=skill_category; Details=skill_name; Values=Skill Mentions,Category breakdown
+Matching,Card,High Opportunity Jobs,Salary+Remote+NoDegree
+Matching,Card,High Opportunity Share %,Candidate friendly segment
+Matching,Funnel,Total Jobs -> Jobs With Salary -> Jobs No Degree -> Remote Jobs,Quick pipeline story
