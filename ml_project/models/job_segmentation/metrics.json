@@ -1,0 +1,13 @@
+{
+  "silhouette_score_train": 0.1191,
+  "silhouette_score_test": 0.1335,
+  "n_clusters": 5,
+  "cluster_sizes": {
+    "0": 2608,
+    "1": 4986,
+    "2": 6564,
+    "3": 1819,
+    "4": 23
+  },
+  "model": "KMeans"
+}

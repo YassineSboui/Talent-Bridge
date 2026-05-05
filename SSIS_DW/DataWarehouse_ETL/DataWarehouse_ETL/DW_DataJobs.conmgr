@@ -6,6 +6,8 @@
   DTS:CreationName="OLEDB">
   <DTS:ObjectData>
     <DTS:ConnectionManager
-      DTS:ConnectionString="Data Source=localhost;Initial Catalog=DW_DataJobs;Provider=MSOLEDBSQL;Integrated Security=SSPI;Auto Translate=False;Application Name=SSIS_DW_DataJobs;Connect Timeout=60;" />
+      DTS:ConnectRetryCount="1"
+      DTS:ConnectRetryInterval="5"
+      DTS:ConnectionString="Data Source=DESKTOP-3LFVKQM;User ID=;Initial Catalog=DW_DataJobs;Provider=MSOLEDBSQL19.1;Persist Security Info=False;Integrated Security=SSPI;Auto Translate=False;Application Name=SSIS_DW_DataJobs;Initial File Name=;Trust Server Certificate=True;Server SPN=;Authentication=;Access Token=;Host Name In Certificate=;Server Certificate=;" />
   </DTS:ObjectData>
 </DTS:ConnectionManager>

@@ -1,0 +1,6 @@
+{
+  "rmse": 46451.63,
+  "r2": 0.2211,
+  "mae": 33340.65,
+  "model": "GradientBoostingRegressor"
+}

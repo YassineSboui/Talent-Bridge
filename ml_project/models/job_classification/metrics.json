@@ -1,0 +1,7 @@
+{
+  "metrics": {
+    "accuracy": 0.9945,
+    "model": "GradientBoostingClassifier"
+  },
+  "classification_report": "              precision    recall  f1-score   support\n\n    contract       0.99      1.00      1.00       179\n  kontraktor       1.00      0.50      0.67         2\n\n    accuracy                           0.99       181\n   macro avg       1.00      0.75      0.83       181\nweighted avg       0.99      0.99      0.99       181\n"
+}
