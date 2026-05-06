@@ -1,0 +1,18 @@
+services:
+  backend:
+    build:
+      context: ../..
+      dockerfile: Infrastructure/docker/backend.Dockerfile
+    env_file:
+      - ../env/backend.env.example
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ../..
+      dockerfile: Infrastructure/docker/frontend.Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend

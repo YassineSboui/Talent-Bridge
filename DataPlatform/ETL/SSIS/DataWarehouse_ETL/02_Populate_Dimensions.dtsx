@@ -1,0 +1,250 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="4/16/2026 12:00:00 PM"
+  DTS:CreatorComputerName="MEA-23VYXL3"
+  DTS:CreatorName="YassineSBOUI"
+  DTS:DTSID="{F1A20001-0001-4000-8000-000000000003}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="16.0.5397.1"
+  DTS:LocaleID="1036"
+  DTS:ObjectName="02_Populate_Dimensions"
+  DTS:PackageType="5"
+  DTS:ProtectionLevel="0"
+  DTS:VersionBuild="3"
+  DTS:VersionGUID="{E2B30001-0001-4000-8000-000000000033}">
+  <DTS:Property DTS:Name="PackageFormatVersion" DTS:DataType="6">8</DTS:Property>
+  <DTS:Variables />
+  <DTS:Executables>
+
+    <!-- ============================================================ -->
+    <!-- TASK 1: dim.date (2023-01-01 to 2025-12-31)                  -->
+    <!-- Recursive CTE, idempotent (skips if populated)               -->
+    <!-- Covers full calendar range for data + future                 -->
+    <!-- ============================================================ -->
+    <DTS:Executable
+      DTS:refId="Package\SQL_Dim_Date"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Populate date dimension with 3-year calendar (2023-2025)"
+      DTS:DTSID="{A0020001-0001-4000-8000-100000000001}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="SQL_Dim_Date"
+      DTS:TaskContact="Execute SQL Task">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="DW_DataJobs"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;-- Only populate if not already filled (idempotent)&#xA;IF NOT EXISTS (SELECT 1 FROM dim.[date] WHERE date_key &gt; 0)&#xA;BEGIN&#xA;    SET DATEFORMAT ymd;&#xA;    ;WITH DateCTE AS (&#xA;        SELECT CAST('2023-01-01' AS DATE) AS dt&#xA;        UNION ALL&#xA;        SELECT DATEADD(DAY, 1, dt) FROM DateCTE WHERE dt &lt; '2025-12-31'&#xA;    )&#xA;    INSERT INTO dim.[date] (&#xA;        date_key, full_date, day_of_month, day_of_week, day_name,&#xA;        week_of_year, month_num, month_name, quarter, year, is_weekend&#xA;    )&#xA;    SELECT&#xA;        CAST(FORMAT(dt, 'yyyyMMdd') AS INT),&#xA;        dt,&#xA;        DAY(dt),&#xA;        DATEPART(WEEKDAY, dt),&#xA;        DATENAME(WEEKDAY, dt),&#xA;        DATEPART(ISO_WEEK, dt),&#xA;        MONTH(dt),&#xA;        DATENAME(MONTH, dt),&#xA;        DATEPART(QUARTER, dt),&#xA;        YEAR(dt),&#xA;        CASE WHEN DATEPART(WEEKDAY, dt) IN (1, 7) THEN 1 ELSE 0 END&#xA;    FROM DateCTE&#xA;    OPTION (MAXRECURSION 1200);&#xA;END"
+          xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+
+    <!-- ============================================================ -->
+    <!-- TASK 2: dim.company (NOT EXISTS - incremental)                -->
+    <!-- ============================================================ -->
+    <DTS:Executable
+      DTS:refId="Package\SQL_Dim_Company"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Incremental load company dimension"
+      DTS:DTSID="{A0020001-0001-4000-8000-100000000002}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="SQL_Dim_Company"
+      DTS:TaskContact="Execute SQL Task">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="DW_DataJobs"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;INSERT INTO dim.company (company_name)&#xA;SELECT x.company_name&#xA;FROM (&#xA;    SELECT DISTINCT ISNULL(NULLIF(LTRIM(RTRIM(s.company_name)), N''), N'Unknown') AS company_name&#xA;    FROM staging.job_postings s&#xA;) x&#xA;WHERE NOT EXISTS (SELECT 1 FROM dim.company c WHERE c.company_name = x.company_name);"
+          xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+
+    <!-- ============================================================ -->
+    <!-- TASK 3: dim.location (GROUP BY + NOT EXISTS - dedup safe)     -->
+    <!-- ============================================================ -->
+    <DTS:Executable
+      DTS:refId="Package\SQL_Dim_Location"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Incremental load location dimension with dedup"
+      DTS:DTSID="{A0020001-0001-4000-8000-100000000003}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="SQL_Dim_Location"
+      DTS:TaskContact="Execute SQL Task">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="DW_DataJobs"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;INSERT INTO dim.[location] (raw_location, city, state_region, country)&#xA;SELECT&#xA;    s.raw_location,&#xA;    NULLIF(LTRIM(RTRIM(s.city)), N''),&#xA;    NULLIF(LTRIM(RTRIM(s.state_region)), N''),&#xA;    ISNULL(NULLIF(LTRIM(RTRIM(s.country)), N''), N'Unknown')&#xA;FROM staging.job_postings s&#xA;GROUP BY s.raw_location,&#xA;         NULLIF(LTRIM(RTRIM(s.city)), N''),&#xA;         NULLIF(LTRIM(RTRIM(s.state_region)), N''),&#xA;         ISNULL(NULLIF(LTRIM(RTRIM(s.country)), N''), N'Unknown')&#xA;HAVING NOT EXISTS (&#xA;    SELECT 1 FROM dim.[location] l&#xA;    WHERE ISNULL(l.raw_location, N'') = ISNULL(s.raw_location, N'')&#xA;      AND l.country = ISNULL(NULLIF(LTRIM(RTRIM(s.country)), N''), N'Unknown')&#xA;);"
+          xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+
+    <!-- ============================================================ -->
+    <!-- TASK 4: dim.job_category                                      -->
+    <!-- ============================================================ -->
+    <DTS:Executable
+      DTS:refId="Package\SQL_Dim_JobCategory"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Incremental load job category dimension"
+      DTS:DTSID="{A0020001-0001-4000-8000-100000000004}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="SQL_Dim_JobCategory"
+      DTS:TaskContact="Execute SQL Task">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="DW_DataJobs"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;INSERT INTO dim.job_category (category_name)&#xA;SELECT x.category_name&#xA;FROM (SELECT DISTINCT LTRIM(RTRIM(s.job_title_short)) AS category_name FROM staging.job_postings s) x&#xA;WHERE NOT EXISTS (SELECT 1 FROM dim.job_category jc WHERE jc.category_name = x.category_name);"
+          xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+
+    <!-- ============================================================ -->
+    <!-- TASK 5: dim.job_portal                                        -->
+    <!-- ============================================================ -->
+    <DTS:Executable
+      DTS:refId="Package\SQL_Dim_JobPortal"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Incremental load job portal dimension"
+      DTS:DTSID="{A0020001-0001-4000-8000-100000000005}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="SQL_Dim_JobPortal"
+      DTS:TaskContact="Execute SQL Task">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="DW_DataJobs"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;INSERT INTO dim.job_portal (portal_name)&#xA;SELECT x.portal_name&#xA;FROM (SELECT DISTINCT ISNULL(NULLIF(LTRIM(RTRIM(s.job_portal)), N''), N'Unknown') AS portal_name FROM staging.job_postings s) x&#xA;WHERE NOT EXISTS (SELECT 1 FROM dim.job_portal p WHERE p.portal_name = x.portal_name);"
+          xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+
+    <!-- ============================================================ -->
+    <!-- TASK 6: dim.schedule_type                                     -->
+    <!-- ============================================================ -->
+    <DTS:Executable
+      DTS:refId="Package\SQL_Dim_ScheduleType"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Incremental load schedule type dimension"
+      DTS:DTSID="{A0020001-0001-4000-8000-100000000006}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="SQL_Dim_ScheduleType"
+      DTS:TaskContact="Execute SQL Task">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="DW_DataJobs"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;INSERT INTO dim.schedule_type (schedule_type_name)&#xA;SELECT x.schedule_type_name&#xA;FROM (SELECT DISTINCT LTRIM(RTRIM(s.schedule_type_name)) AS schedule_type_name FROM staging.job_schedule_types s WHERE LTRIM(RTRIM(s.schedule_type_name)) &lt;&gt; N'') x&#xA;WHERE NOT EXISTS (SELECT 1 FROM dim.schedule_type st WHERE st.schedule_type_name = x.schedule_type_name);"
+          xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+
+    <!-- ============================================================ -->
+    <!-- TASK 7: dim.skill                                             -->
+    <!-- ============================================================ -->
+    <DTS:Executable
+      DTS:refId="Package\SQL_Dim_Skill"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Incremental load skill dimension"
+      DTS:DTSID="{A0020001-0001-4000-8000-100000000007}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="SQL_Dim_Skill"
+      DTS:TaskContact="Execute SQL Task">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="DW_DataJobs"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;INSERT INTO dim.skill (skill_name, skill_category)&#xA;SELECT x.skill_name, x.skill_category&#xA;FROM (&#xA;    SELECT DISTINCT&#xA;        LTRIM(RTRIM(s.skill_name)) AS skill_name,&#xA;        ISNULL(NULLIF(LTRIM(RTRIM(s.skill_category)), N''), N'other') AS skill_category&#xA;    FROM staging.job_skills s&#xA;    WHERE s.skill_name IS NOT NULL AND LTRIM(RTRIM(s.skill_name)) &lt;&gt; N''&#xA;) x&#xA;WHERE NOT EXISTS (&#xA;    SELECT 1 FROM dim.skill sk&#xA;    WHERE sk.skill_name = x.skill_name AND sk.skill_category = x.skill_category&#xA;);"
+          xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+
+    <!-- ============================================================ -->
+    <!-- TASK 8: dim.salary_rate                                       -->
+    <!-- ============================================================ -->
+    <DTS:Executable
+      DTS:refId="Package\SQL_Dim_SalaryRate"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Incremental load salary rate dimension"
+      DTS:DTSID="{A0020001-0001-4000-8000-100000000008}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="SQL_Dim_SalaryRate"
+      DTS:TaskContact="Execute SQL Task">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="DW_DataJobs"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;INSERT INTO dim.salary_rate (rate_name)&#xA;SELECT x.rate_name&#xA;FROM (&#xA;    SELECT DISTINCT CASE WHEN s.salary_rate IS NULL OR LTRIM(RTRIM(s.salary_rate)) = '' THEN 'Unknown' ELSE LTRIM(RTRIM(s.salary_rate)) END AS rate_name&#xA;    FROM staging.job_postings s&#xA;) x&#xA;WHERE NOT EXISTS (SELECT 1 FROM dim.salary_rate sr WHERE sr.rate_name = x.rate_name);"
+          xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+
+    <!-- ============================================================ -->
+    <!-- TASK 9: Validate all dimensions populated                     -->
+    <!-- ============================================================ -->
+    <DTS:Executable
+      DTS:refId="Package\SQL_Validate_Dims"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Validate all dimension tables have rows"
+      DTS:DTSID="{A0020001-0001-4000-8000-100000000009}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="SQL_Validate_Dims"
+      DTS:TaskContact="Execute SQL Task">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="DW_DataJobs"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;DECLARE @err NVARCHAR(500);&#xA;IF (SELECT COUNT(*) FROM dim.[date] WHERE date_key &gt; 0) = 0 BEGIN SET @err = N'dim.date is empty!'; RAISERROR(@err, 16, 1); END&#xA;IF (SELECT COUNT(*) FROM dim.company WHERE company_key &gt; 0) = 0 BEGIN SET @err = N'dim.company is empty!'; RAISERROR(@err, 16, 1); END&#xA;IF (SELECT COUNT(*) FROM dim.[location] WHERE location_key &gt; 0) = 0 BEGIN SET @err = N'dim.location is empty!'; RAISERROR(@err, 16, 1); END&#xA;IF (SELECT COUNT(*) FROM dim.job_category WHERE job_category_key &gt; 0) = 0 BEGIN SET @err = N'dim.job_category is empty!'; RAISERROR(@err, 16, 1); END&#xA;IF (SELECT COUNT(*) FROM dim.job_portal WHERE portal_key &gt; 0) = 0 BEGIN SET @err = N'dim.job_portal is empty!'; RAISERROR(@err, 16, 1); END&#xA;IF (SELECT COUNT(*) FROM dim.schedule_type WHERE schedule_type_key &gt; 0) = 0 BEGIN SET @err = N'dim.schedule_type is empty!'; RAISERROR(@err, 16, 1); END&#xA;IF (SELECT COUNT(*) FROM dim.skill WHERE skill_key &gt; 0) = 0 BEGIN SET @err = N'dim.skill is empty!'; RAISERROR(@err, 16, 1); END&#xA;IF (SELECT COUNT(*) FROM dim.salary_rate WHERE salary_rate_key &gt; 0) = 0 BEGIN SET @err = N'dim.salary_rate is empty!'; RAISERROR(@err, 16, 1); END"
+          xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+
+  </DTS:Executables>
+
+  <!-- FLOW: Date -> [Company||Location||Category||Portal||Schedule||Skill||SalaryRate] parallel -> Validate -->
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints[Date_to_Company]" DTS:CreationName="" DTS:DTSID="{D0020001-0001-4000-8000-200000000001}" DTS:From="Package\SQL_Dim_Date" DTS:LogicalAnd="True" DTS:ObjectName="Date_to_Company" DTS:To="Package\SQL_Dim_Company" />
+    <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints[Date_to_Location]" DTS:CreationName="" DTS:DTSID="{D0020001-0001-4000-8000-200000000002}" DTS:From="Package\SQL_Dim_Date" DTS:LogicalAnd="True" DTS:ObjectName="Date_to_Location" DTS:To="Package\SQL_Dim_Location" />
+    <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints[Date_to_Category]" DTS:CreationName="" DTS:DTSID="{D0020001-0001-4000-8000-200000000003}" DTS:From="Package\SQL_Dim_Date" DTS:LogicalAnd="True" DTS:ObjectName="Date_to_Category" DTS:To="Package\SQL_Dim_JobCategory" />
+    <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints[Date_to_Portal]" DTS:CreationName="" DTS:DTSID="{D0020001-0001-4000-8000-200000000004}" DTS:From="Package\SQL_Dim_Date" DTS:LogicalAnd="True" DTS:ObjectName="Date_to_Portal" DTS:To="Package\SQL_Dim_JobPortal" />
+    <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints[Date_to_Schedule]" DTS:CreationName="" DTS:DTSID="{D0020001-0001-4000-8000-200000000005}" DTS:From="Package\SQL_Dim_Date" DTS:LogicalAnd="True" DTS:ObjectName="Date_to_Schedule" DTS:To="Package\SQL_Dim_ScheduleType" />
+    <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints[Date_to_Skill]" DTS:CreationName="" DTS:DTSID="{D0020001-0001-4000-8000-200000000006}" DTS:From="Package\SQL_Dim_Date" DTS:LogicalAnd="True" DTS:ObjectName="Date_to_Skill" DTS:To="Package\SQL_Dim_Skill" />
+    <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints[Date_to_SalaryRate]" DTS:CreationName="" DTS:DTSID="{D0020001-0001-4000-8000-200000000007}" DTS:From="Package\SQL_Dim_Date" DTS:LogicalAnd="True" DTS:ObjectName="Date_to_SalaryRate" DTS:To="Package\SQL_Dim_SalaryRate" />
+    <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints[Company_to_Validate]" DTS:CreationName="" DTS:DTSID="{D0020001-0001-4000-8000-200000000010}" DTS:From="Package\SQL_Dim_Company" DTS:LogicalAnd="True" DTS:ObjectName="Company_to_Validate" DTS:To="Package\SQL_Validate_Dims" />
+    <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints[Location_to_Validate]" DTS:CreationName="" DTS:DTSID="{D0020001-0001-4000-8000-200000000011}" DTS:From="Package\SQL_Dim_Location" DTS:LogicalAnd="True" DTS:ObjectName="Location_to_Validate" DTS:To="Package\SQL_Validate_Dims" />
+    <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints[Category_to_Validate]" DTS:CreationName="" DTS:DTSID="{D0020001-0001-4000-8000-200000000012}" DTS:From="Package\SQL_Dim_JobCategory" DTS:LogicalAnd="True" DTS:ObjectName="Category_to_Validate" DTS:To="Package\SQL_Validate_Dims" />
+    <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints[Portal_to_Validate]" DTS:CreationName="" DTS:DTSID="{D0020001-0001-4000-8000-200000000013}" DTS:From="Package\SQL_Dim_JobPortal" DTS:LogicalAnd="True" DTS:ObjectName="Portal_to_Validate" DTS:To="Package\SQL_Validate_Dims" />
+    <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints[Schedule_to_Validate]" DTS:CreationName="" DTS:DTSID="{D0020001-0001-4000-8000-200000000014}" DTS:From="Package\SQL_Dim_ScheduleType" DTS:LogicalAnd="True" DTS:ObjectName="Schedule_to_Validate" DTS:To="Package\SQL_Validate_Dims" />
+    <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints[Skill_to_Validate]" DTS:CreationName="" DTS:DTSID="{D0020001-0001-4000-8000-200000000015}" DTS:From="Package\SQL_Dim_Skill" DTS:LogicalAnd="True" DTS:ObjectName="Skill_to_Validate" DTS:To="Package\SQL_Validate_Dims" />
+    <DTS:PrecedenceConstraint DTS:refId="Package.PrecedenceConstraints[SalaryRate_to_Validate]" DTS:CreationName="" DTS:DTSID="{D0020001-0001-4000-8000-200000000016}" DTS:From="Package\SQL_Dim_SalaryRate" DTS:LogicalAnd="True" DTS:ObjectName="SalaryRate_to_Validate" DTS:To="Package\SQL_Validate_Dims" />
+  </DTS:PrecedenceConstraints>
+
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<Objects Version="8">
+  <Package design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout Capacity="16" NumberOfVisibleColumns="8" NumberOfColumns="8">
+        <NodeLayout Size="200,42" Id="Package\SQL_Dim_Date" TopLeft="330,20" />
+        <NodeLayout Size="180,42" Id="Package\SQL_Dim_Company" TopLeft="10,120" />
+        <NodeLayout Size="180,42" Id="Package\SQL_Dim_Location" TopLeft="200,120" />
+        <NodeLayout Size="180,42" Id="Package\SQL_Dim_JobCategory" TopLeft="390,120" />
+        <NodeLayout Size="180,42" Id="Package\SQL_Dim_JobPortal" TopLeft="580,120" />
+        <NodeLayout Size="180,42" Id="Package\SQL_Dim_ScheduleType" TopLeft="10,210" />
+        <NodeLayout Size="180,42" Id="Package\SQL_Dim_Skill" TopLeft="200,210" />
+        <NodeLayout Size="180,42" Id="Package\SQL_Dim_SalaryRate" TopLeft="390,210" />
+        <NodeLayout Size="200,42" Id="Package\SQL_Validate_Dims" TopLeft="330,310" />
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+</Objects>]]></DTS:DesignTimeProperties>
+
+</DTS:Executable>

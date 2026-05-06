@@ -1,0 +1,19 @@
+services:
+  backend:
+    build:
+      context: ../..
+      dockerfile: Infrastructure/docker/backend.Dockerfile
+    environment:
+      DW_DATAJOBS_CONNECTION_STRING: ${DW_DATAJOBS_CONNECTION_STRING:-Driver={ODBC Driver 17 for SQL Server};Server=host.docker.internal;Database=DW_DataJobs;Trusted_Connection=no;TrustServerCertificate=yes;}
+      TALENTBRIDGE_EMBEDDING_BACKEND: ${TALENTBRIDGE_EMBEDDING_BACKEND:-tfidf}
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ../..
+      dockerfile: Infrastructure/docker/frontend.Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend

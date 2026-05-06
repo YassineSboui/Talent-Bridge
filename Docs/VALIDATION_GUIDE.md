@@ -1,0 +1,56 @@
+# Talent Bridge Validation Guide
+
+This guide lets a teacher validate each mini-project independently.
+
+## Mini-Projects
+
+| Mini-project | Folder | Main objective | Validation artifact |
+| --- | --- | --- | --- |
+| Data warehouse / ETL | `DataPlatform/` | Clean raw jobs and load SQL Server warehouse | SSIS packages, SQL views |
+| BI dashboard | `BI/` | Visualize IT job market trends | Power BI `.pbix` |
+| NLP CV extraction | `NLP/CVExtraction/` | Extract entities from CV PDFs | spaCy model and API extraction |
+| Skill extraction / normalization | `NLP/SkillExtraction/` | Normalize skills across CVs/jobs | alias-normalized skill lists |
+| NLP CV-job matching | `NLP/CVMatching/`, `Recommendation/` | Compute CV-job similarity and score | match results with breakdown |
+| ML salary prediction | `MachineLearning/` | Predict salary from SQL warehouse jobs | regression metrics/model |
+| ML job classification | `MachineLearning/` | Classify remote/full-time job signals | classification metrics/models |
+| ML job segmentation | `MachineLearning/` | Cluster similar jobs | cluster profiles/report |
+| Document AI CV quality | `DocumentAI/` | Classify CV as `Pro` or `Non Pro` | quality score and suggestions |
+| Backend platform | `Backend/` | Role-based recruitment API | `/api/v1` routes |
+| Frontend platform | `Frontend/` | Role-based SaaS UI | Vue app build and pages |
+| Infrastructure | `Infrastructure/` | Local/deployment scripts | launcher, Docker, compose, CI |
+
+## Global Verification Commands
+
+```bash
+python -m compileall -q Backend/TalentBridgeAPI NLP DocumentAI Recommendation MachineLearning Tests
+python Tests/smoke/test_demo_logic.py
+python Tests/smoke/test_platform_workflows.py
+python Tests/integration/test_sql_ml_views.py
+```
+
+Frontend:
+
+```bash
+cd Frontend/TalentBridgeWeb
+npm run build
+```
+
+ML from SQL warehouse:
+
+```bash
+cd Backend/TalentBridgeAPI
+python scripts/train_ml_objectives.py --max-rows 60000 --sample-size 24000
+```
+
+## Important Rule
+
+Final ML validation must use SQL Server warehouse views, not raw CSV:
+
+```text
+DW_DataJobs.dbo.vw_ml_jobs
+DW_DataJobs.dbo.vw_ml_salary_training
+DW_DataJobs.dbo.vw_ml_classification_training
+DW_DataJobs.dbo.vw_ml_segmentation_training
+```
+
+`Data/raw/data_jobs.csv` is only the ETL raw source or development fallback.
