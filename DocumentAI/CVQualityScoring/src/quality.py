@@ -8,7 +8,9 @@ from __future__ import annotations
 
 from typing import Any
 
+from .dl_model_loader import predict_with_dl_quality_model
 from .features import extract_quality_features, normalize_cv_text
+from .grades import binary_label_from_grade, grade_from_score
 from .model_loader import predict_with_trained_model
 from .rules import add_score, bounded_score, decision_confidence, quality_hard_gates
 
@@ -18,6 +20,7 @@ def classify_cv_quality(text: str, extraction: dict[str, Any] | None = None) -> 
     extraction = extraction or {}
     normalized = normalize_cv_text(text)
     features = extract_quality_features(normalized, extraction)
+    dl_prediction = predict_with_dl_quality_model(normalized, features)
     model_prediction = predict_with_trained_model(normalized, features)
     hard_gates = quality_hard_gates(features)
 
@@ -86,33 +89,51 @@ def classify_cv_quality(text: str, extraction: dict[str, Any] | None = None) -> 
     rule_label = "Pro" if score >= 70 else "Non Pro"
     quality_label = rule_label
     decision_source = "rules"
+    final_score = score
     if hard_gates:
         quality_label = "Non Pro"
         decision_source = "hard_gates"
-        score = min(score, 69)
+        final_score = min(score, 54 if score < 55 else 69)
+    elif dl_prediction:
+        decision_source = "hybrid_dl_rules"
+        dl_score = int(dl_prediction["score"])
+        if abs(dl_score - score) <= 18:
+            final_score = int(round((score * 0.55) + (dl_score * 0.45)))
+        elif 45 <= score <= 82:
+            final_score = int(round((score * 0.7) + (dl_score * 0.3)))
+        else:
+            final_score = int(round((score * 0.85) + (dl_score * 0.15)))
+        quality_label = binary_label_from_grade(grade_from_score(final_score))
     elif model_prediction and model_prediction["confidence"] >= 0.85:
         # The trained model is useful as a second opinion, but current labels are
         # bootstrap/weak. It can confirm rules or resolve borderline scores; it
         # should not flip an obviously good/bad rule decision.
         decision_source = "hybrid_model"
         if model_prediction["label"] == rule_label:
-            score = int(round((score * 0.78) + (model_prediction["confidence"] * 100 * 0.22)))
+            final_score = int(round((score * 0.78) + (model_prediction["confidence"] * 100 * 0.22)))
         elif 60 <= score <= 79:
             quality_label = model_prediction["label"]
-            score = int(round((score * 0.82) + (model_prediction["confidence"] * 100 * 0.18)))
+            final_score = int(round((score * 0.82) + (model_prediction["confidence"] * 100 * 0.18)))
         else:
             decision_source = "rules_model_disagreed"
 
+    final_score = bounded_score(final_score)
+    quality_grade = grade_from_score(final_score)
+    quality_label = "Non Pro" if hard_gates else binary_label_from_grade(quality_grade)
+
     return {
         "quality_label": quality_label,
-        "quality_score": score,
+        "quality_grade": quality_grade,
+        "quality_score": final_score,
+        "rule_score": score,
         "rule_label": rule_label,
         "decision_source": decision_source,
         "hard_gates": hard_gates,
         "structure_score": structure_score,
         "content_score": content_score,
+        "dl_prediction": dl_prediction,
         "model_prediction": model_prediction,
-        "confidence": decision_confidence(score, hard_gates, model_prediction, rule_label, quality_label),
+        "confidence": decision_confidence(final_score, hard_gates, dl_prediction or model_prediction, rule_label, quality_label),
         "features": features,
         "positive_checks": positive_checks,
         "issues": issues,

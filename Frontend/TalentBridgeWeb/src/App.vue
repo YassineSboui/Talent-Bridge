@@ -199,7 +199,7 @@ async function confirmApply() {
     applyFile.value = null
     setTimeout(() => { toast.value = '' }, 4500)
   } catch (err) {
-    toast.value = err.message.includes('Already') ? 'You already applied to this job.' : err.message
+    toast.value = err.message.includes('Already') ? 'You already applied to this job.' : (err.message || 'Please upload a real CV PDF before applying.')
     setTimeout(() => { toast.value = '' }, 4500)
   } finally {
     applyLoading.value = false
@@ -466,7 +466,7 @@ function logout() {
               <span>Extracting skills...</span><span>Analyzing experience...</span><span>Scoring CV quality...</span><span>Generating recommendations...</span>
             </div>
             <template v-if="cvResult?.cv?.quality">
-              <div class="quality-score" :class="cvResult.cv.quality.quality_label === 'Pro' ? 'success' : 'danger'"><strong>{{ cvResult.cv.quality.quality_label }}</strong><span>{{ cvResult.cv.quality.quality_score }} / 100</span></div>
+              <div class="quality-score" :class="cvResult.cv.quality.quality_label === 'Pro' ? 'success' : 'danger'"><strong>{{ cvResult.cv.quality.quality_grade || cvResult.cv.quality.quality_label }}</strong><span>{{ cvResult.cv.quality.quality_score }} / 100 · {{ cvResult.cv.quality.quality_label }}</span></div>
               <div class="extraction-grid">
                 <article><small>Detected skills</small><strong>{{ cvResult.cv.extraction.detected_skills?.length || 0 }}</strong><p>{{ (cvResult.cv.extraction.detected_skills || []).join(', ') || 'No skills detected' }}</p></article>
                 <article><small>Experience</small><p>{{ cvResult.cv.extraction.experience }}</p></article>

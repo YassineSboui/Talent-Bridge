@@ -27,6 +27,7 @@ cv_ner_project/models/model-last/
 cv_ner_project/data/processed/*.spacy
 Artifacts/models/
 Artifacts/reports/
+Artifacts/cache/
 Artifacts/platform_store.json
 
 # Local agent/tooling metadata

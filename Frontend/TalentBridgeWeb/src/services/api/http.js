@@ -8,6 +8,10 @@ export async function request(path, options = {}) {
   if (authStore.token) headers.set('Authorization', `Bearer ${authStore.token}`)
   const response = await fetch(`${API_BASE}${path}`, { ...options, headers })
   const payload = await response.json().catch(() => ({}))
-  if (!response.ok) throw new Error(payload.detail || `Request failed: ${response.status}`)
+  if (!response.ok) {
+    const detail = payload.detail
+    const message = typeof detail === 'object' && detail?.message ? detail.message : detail
+    throw new Error(message || `Request failed: ${response.status}`)
+  }
   return payload
 }

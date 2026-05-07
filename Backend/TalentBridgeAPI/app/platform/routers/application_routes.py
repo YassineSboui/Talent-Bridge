@@ -63,6 +63,8 @@ def apply_to_job(payload: ApplicationCreateRequest, user: dict = Depends(require
     selected_cv = store.cv_documents.get(payload.cv_id) if payload.cv_id else candidate_cvs[-1]
     if not selected_cv or selected_cv.get("owner_id") != user["id"]:
         raise HTTPException(status_code=400, detail="Selected CV does not belong to this candidate")
+    if selected_cv.get("document_check", {}).get("is_cv") is False:
+        raise HTTPException(status_code=422, detail="This file does not look like a real CV. Please upload a real CV PDF before applying.")
     if any(item for item in store.applications.values() if item["candidate_id"] == user["id"] and item["job_id"] == payload.job_id):
         raise HTTPException(status_code=409, detail="Already applied to this job")
     application_id = store.next_id("application")

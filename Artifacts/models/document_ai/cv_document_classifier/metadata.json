@@ -1,0 +1,22 @@
+{
+  "model_name": "cv_document_cnn",
+  "task": "cv_vs_non_cv_document_classification",
+  "image_size": [
+    160,
+    224
+  ],
+  "dropout": 0.25,
+  "positive_label": "cv",
+  "negative_label": "non_cv",
+  "decision_threshold": 0.2,
+  "accept_threshold": 0.7,
+  "reject_threshold": 0.1,
+  "strong_text_evidence_threshold": 0.65,
+  "moderate_text_evidence_threshold": 0.45,
+  "text_evidence_probability_floor": 0.88,
+  "text_evidence_manual_review_floor": 0.55,
+  "train_samples": 3479,
+  "validation_samples": 746,
+  "test_samples": 746,
+  "device": "cpu"
+}
