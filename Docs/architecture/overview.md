@@ -39,7 +39,7 @@ Main domains:
 - `BI`: Power BI dashboard assets.
 - `NLP`: CV extraction and skill normalization.
 - `MachineLearning`: salary regression, job classification, K-Means segmentation.
-- `DocumentAI`: CV quality scoring.
+- `DocumentAI`: CV-vs-Non-CV document classification and hybrid DL/rules CV quality grading.
 - `Recommendation`: semantic matching, job ranking, and explanations.
 - `Backend`: API orchestration, auth/RBAC, platform workflows, and technical AI validation endpoints.
 - `Frontend`: Vue application.
@@ -49,3 +49,13 @@ Main domains:
 Platform routes are registered from `Backend/TalentBridgeAPI/app/platform/api.py` and implemented under `Backend/TalentBridgeAPI/app/platform/routers/`.
 
 The local demo store is `Artifacts/platform_store.json`. SQL migration `008_create_platform_business_tables.sql` prepares the future `platform.*` persistence layer.
+
+DocumentAI CV upload flow:
+
+```text
+Upload PDF
+-> CVDocumentClassification CNN validates real CV vs Non-CV
+-> CVExtraction extracts text/entities
+-> CVQualityScoring MLP + rules assigns quality grade and suggestions
+-> Backend stores document_check, extraction, quality, and preview data
+```

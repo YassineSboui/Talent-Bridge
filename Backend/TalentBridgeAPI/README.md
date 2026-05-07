@@ -36,9 +36,11 @@ Backend/TalentBridgeAPI/app/platform/
 
 1. Users authenticate through `/api/v1/auth/*`.
 2. Role-based dependencies protect candidate, recruiter, and admin endpoints.
-3. Business routes call domain modules for CV quality, extraction, and matching.
-4. A local JSON-backed demo store supports runtime workflows.
-5. SQL migration `008_create_platform_business_tables.sql` prepares future persistent platform tables.
+3. CV upload first calls `DocumentAI/CVDocumentClassification` to reject Non-CV files.
+4. Valid CVs continue through NLP extraction, hybrid DL/rules quality grading, matching, and applications.
+5. Business routes call domain modules for CV quality, extraction, and matching.
+6. A local JSON-backed demo store supports runtime workflows.
+7. SQL migration `008_create_platform_business_tables.sql` prepares future persistent platform tables.
 
 Runtime demo state is saved at:
 
@@ -87,6 +89,8 @@ python Tests/smoke/test_platform_workflows.py
 - Backend exposes `/api/v1` role-based APIs.
 - Auth and RBAC exist.
 - Candidate/recruiter/admin workflows exist.
+- Non-CV files are rejected before CV extraction or application creation.
+- CV quality includes five-level grade plus `Pro / Non Pro` compatibility label.
 - Backend consumes AI modules but does not merge them.
 - Platform business tables migration exists.
 - Demo state persistence is documented separately from production SQL tables.

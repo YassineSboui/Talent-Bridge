@@ -1,7 +1,8 @@
 # DocumentAI
 
-Document analysis and CV quality scoring domain.
+Document analysis domain.
 
-Current module:
+Current modules:
 
 - `CVQualityScoring`: classifies CVs as `Pro` or `Non Pro`, returns score, confidence, hard gates, and improvement suggestions.
+- `CVDocumentClassification`: classifies whether a document is a CV before extraction.

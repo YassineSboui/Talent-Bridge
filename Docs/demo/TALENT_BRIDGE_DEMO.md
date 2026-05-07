@@ -26,7 +26,7 @@ recruiter@talentbridge.local / recruiter123
 admin@talentbridge.local / admin123
 ```
 
-6. Candidate flow: upload or select a PDF CV, review AI CV feedback, browse SQL-backed jobs, apply to a job, and check notifications.
+6. Candidate flow: upload or select a PDF CV, watch the platform reject Non-CV documents, review AI CV grade/feedback, browse SQL-backed jobs, apply to a job, and check notifications.
 
 7. Recruiter flow: manage jobs, search candidates, open application details, preview the PDF CV, inspect NER extraction, and accept/reject applications.
 
@@ -35,10 +35,18 @@ admin@talentbridge.local / admin123
 9. Explain the platform pipeline:
 
 ```text
-CV PDF -> NLP extraction -> CV quality scoring -> semantic matching -> ranked SQL warehouse jobs -> application workflow
+CV PDF -> CV/Non-CV DL validation -> NLP extraction -> DL + rules CV quality grade -> semantic matching -> ranked SQL warehouse jobs -> application workflow
 ```
 
 The role-based platform uses `/api/v1/*` routes and persists local demo state to `Artifacts/platform_store.json`.
+
+CV quality now shows a five-level grade:
+
+```text
+Excellent / Good / Average / Weak / Poor
+```
+
+The legacy `Pro / Non Pro` label is still returned for compatibility and teacher validation.
 
 ## Technical AI Validation Flow
 

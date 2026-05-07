@@ -53,7 +53,7 @@ Frontend/TalentBridgeWeb
 The final application flow is role-based:
 
 ```text
-candidate -> CV upload, job discovery, application tracking, notifications
+candidate -> validated CV upload, CV quality grade, job discovery, application tracking, notifications
 recruiter -> company jobs, candidate search, CV preview, application decisions
 admin -> monitoring, users/jobs/applications overview, audit, demo reset
 ```
@@ -71,7 +71,8 @@ The backend also keeps technical AI endpoints for direct validation: `/extract`,
 | NLP extraction | `NLP/CVExtraction/` | PDF text, translation, NER training utilities |
 | NLP matching | `NLP/CVMatching/`, `Recommendation/JobRecommendation/` | Embeddings and final job ranking |
 | Skill normalization | `NLP/SkillExtraction/` | Skill aliases and text normalization |
-| CV quality | `DocumentAI/CVQualityScoring/` | `Pro / Non Pro` scoring and model training |
+| CV validation | `DocumentAI/CVDocumentClassification/` | DL document classifier that verifies uploads are real CVs before extraction |
+| CV quality | `DocumentAI/CVQualityScoring/` | Hybrid DL + rules grading: `Excellent / Good / Average / Weak / Poor` and `Pro / Non Pro` |
 | ML objectives | `MachineLearning/` | Salary regression, job classification, K-Means segmentation |
 | Artifacts | `Artifacts/` | Generated models and reports |
 
@@ -217,19 +218,41 @@ Docs/ml/ML_OBJECTIVES_REPORT.md
 
 ## CV Quality
 
+DocumentAI validates and scores CVs in two stages:
+
+```text
+DocumentAI/CVDocumentClassification/
+DocumentAI/CVQualityScoring/
+```
+
+Runtime flow:
+
+```text
+PDF upload
+  -> CV-vs-Non-CV DL classifier
+  -> reject Non-CV or uncertain documents before extraction
+  -> NLP extraction
+  -> hybrid DL + rules quality grading
+  -> Excellent / Good / Average / Weak / Poor + Pro / Non Pro
+```
+
 Quality scoring module:
 
 ```text
 DocumentAI/CVQualityScoring/
 ```
 
-Model artifact:
+Model artifacts:
 
 ```text
+Artifacts/models/document_ai/cv_document_classifier/model.pt
+Artifacts/models/document_ai/cv_quality_dl/model.pt
+Artifacts/models/document_ai/cv_quality_dl/vectorizer.pkl
+Artifacts/models/document_ai/cv_quality_dl/scaler.pkl
 Artifacts/models/document_ai/cv_quality_model.pkl
 ```
 
-The current quality model uses bootstrap weak/synthetic labels. It is useful for a demo, but final claims require manually reviewed real CV labels.
+The current CV quality DL model uses rubric pseudo-labels and controlled synthetic variants. It is useful for a demo, but final scientific claims require manually reviewed real CV labels.
 
 ## Verification
 
