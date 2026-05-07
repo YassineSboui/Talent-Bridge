@@ -628,7 +628,7 @@ function logout() {
               <h2>{{ selectedApplication.candidate_name }}</h2>
               <p class="muted">{{ selectedApplication.candidate_email }}</p>
               <object v-if="selectedApplication.cv?.preview_data_url" class="pdf-preview" :data="selectedApplication.cv.preview_data_url" type="application/pdf"><p>PDF preview unavailable. {{ selectedApplication.cv?.file_name }}</p></object>
-              <div v-else class="cv-preview modal-preview"><summary>{{ selectedApplication.cv?.file_name }}</summary><p>{{ selectedApplication.cv?.extraction?.raw_text_preview || selectedApplication.cv?.extraction?.summary || 'No CV file uploaded yet. Showing profile-derived extraction.' }}</p></div>
+              <div v-else class="cv-preview modal-preview"><strong>{{ selectedApplication.cv?.file_name }}</strong><p>{{ selectedApplication.cv?.extraction?.raw_text_preview || selectedApplication.cv?.extraction?.summary || 'No CV file uploaded yet. Showing profile-derived extraction.' }}</p></div>
               <textarea v-model="applicationNote" placeholder="Recruiter notes"></textarea>
               <button class="secondary spaced" type="button" @click="saveApplicationNote">Save note</button>
             </section>
