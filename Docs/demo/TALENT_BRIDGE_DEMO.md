@@ -18,13 +18,40 @@ cd Frontend/TalentBridgeWeb
 npm run dev
 ```
 
-5. Upload a sample CV from `Data/samples/cv/` or `Backend/TalentBridgeAPI/test_cv.pdf`.
-
-6. Explain the pipeline:
+5. Open `http://localhost:5173` and sign in with one demo role.
 
 ```text
-CV PDF -> NLP extraction -> CV quality scoring -> NLP semantic matching -> ranked SQL warehouse jobs -> saved BI-ready analysis
+candidate@talentbridge.local / candidate123
+recruiter@talentbridge.local / recruiter123
+admin@talentbridge.local / admin123
 ```
+
+6. Candidate flow: upload or select a PDF CV, review AI CV feedback, browse SQL-backed jobs, apply to a job, and check notifications.
+
+7. Recruiter flow: manage jobs, search candidates, open application details, preview the PDF CV, inspect NER extraction, and accept/reject applications.
+
+8. Admin flow: review AI monitoring, platform data, audit/retry tools, and use `Reset demo data` when a clean demo state is needed.
+
+9. Explain the platform pipeline:
+
+```text
+CV PDF -> NLP extraction -> CV quality scoring -> semantic matching -> ranked SQL warehouse jobs -> application workflow
+```
+
+The role-based platform uses `/api/v1/*` routes and persists local demo state to `Artifacts/platform_store.json`.
+
+## Technical AI Validation Flow
+
+For direct endpoint validation without the UI, use:
+
+```text
+POST /extract
+POST /match-jobs
+POST /classify-cv-quality
+POST /analyze-cv-full
+```
+
+`/analyze-cv-full` can save BI-ready analysis rows when `save_results=True` and the SQL CV analysis tables exist.
 
 ## Recommended Explanation
 

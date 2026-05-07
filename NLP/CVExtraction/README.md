@@ -59,11 +59,15 @@ Data/raw/CV_Ners.jsonl for training
 
 ## How To Validate
 
-Use backend extraction route:
+Use backend extraction routes:
 
 ```text
 POST /extract
+POST /analyze-cv-full
+POST /api/v1/cv/upload
 ```
+
+`/api/v1/cv/upload` is the route used by the role-based frontend. It calls the full extraction pipeline, stores the CV in the platform demo store, and attaches extraction/quality details to candidate workflows.
 
 Or run the global smoke test:
 

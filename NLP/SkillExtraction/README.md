@@ -33,10 +33,10 @@ NLP/SkillExtraction/src/normalization.py
 ## Used By
 
 ```text
-NLP CV extraction
-Recommendation matching
-Machine Learning feature preparation
-Document AI quality scoring
+Recommendation/JobRecommendation/src/matching.py
+Recommendation/JobRecommendation/src/semantic_similarity.py
+Recommendation/JobRecommendation/src/score_components.py
+Backend/TalentBridgeAPI/app/normalization.py compatibility wrapper
 ```
 
 ## Teacher Validation Checklist

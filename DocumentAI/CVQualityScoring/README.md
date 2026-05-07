@@ -30,8 +30,14 @@ Recruitment platforms need to help candidates improve CV quality before applying
 DocumentAI/CVQualityScoring/src/quality.py
 DocumentAI/CVQualityScoring/src/features.py
 DocumentAI/CVQualityScoring/src/rules.py
+DocumentAI/CVQualityScoring/src/classifier.py
 DocumentAI/CVQualityScoring/src/model_loader.py
+DocumentAI/CVQualityScoring/src/quality_model.py
+DocumentAI/CVQualityScoring/training/build_quality_dataset.py
+DocumentAI/CVQualityScoring/training/generate_quality_seed_dataset.py
+DocumentAI/CVQualityScoring/training/merge_manual_labels.py
 DocumentAI/CVQualityScoring/training/train_quality_model.py
+DocumentAI/CVQualityScoring/training/validate_quality_dataset.py
 ```
 
 ## How It Works
@@ -42,6 +48,8 @@ DocumentAI/CVQualityScoring/training/train_quality_model.py
 4. Compute explainable rule score.
 5. Optionally combine with trained bootstrap classifier.
 6. Return feedback and suggestions.
+
+The current trained model is demo-grade. It can use bootstrap, weak, and synthetic labels; strong final claims require manually reviewed real CV labels with `weak_label=false` and `synthetic=false`.
 
 ## Model Artifact
 

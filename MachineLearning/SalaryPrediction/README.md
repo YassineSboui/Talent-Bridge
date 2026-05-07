@@ -37,6 +37,13 @@ and filters valid salary rows.
 5. Compare Ridge and RandomForest candidates.
 6. Select the best model by RMSE.
 
+The implementation is centralized in:
+
+```text
+MachineLearning/SharedML/src/train_ml_objectives.py
+Backend/TalentBridgeAPI/scripts/train_ml_objectives.py
+```
+
 ## Latest SQL-Based Metrics
 
 ```text
@@ -62,6 +69,7 @@ python scripts/train_ml_objectives.py --max-rows 60000 --sample-size 24000
 ## Teacher Validation Checklist
 
 - Uses SQL warehouse data, not raw CSV.
+- Implementation path is documented.
 - Predicts `salary_year_avg`.
 - Reports MAE, RMSE, and R2.
 - Saves trained model artifact.

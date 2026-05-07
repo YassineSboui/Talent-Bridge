@@ -1,6 +1,6 @@
 # Talent Bridge
 
-Talent Bridge is a modular data, BI, NLP, ML, and document-AI project for IT job market analysis and CV-to-job recommendation.
+Talent Bridge is a modular data, BI, NLP, ML, document-AI, and role-based recruitment platform for IT job market analysis and CV-to-job recommendation.
 
 ## Architecture
 
@@ -9,19 +9,19 @@ The repository is organized by functional domain:
 ```text
 DataPlatform/      ETL, SQL Server warehouse, SQL views
 BI/                Power BI dashboard assets
-NLP/               CV extraction, skill extraction, semantic matching
+NLP/               CV extraction and skill extraction utilities
 MachineLearning/   Salary prediction, job classification, K-Means segmentation
 DocumentAI/        CV quality scoring: Pro / Non Pro
-Recommendation/    Job ranking and matching explanations
-Shared/            Shared schemas, config, utilities, database helpers
-Backend/           FastAPI orchestration API
+Recommendation/    Semantic matching, job ranking, and explanations
+Shared/            Reserved for shared schemas, config, utilities, database helpers
+Backend/           FastAPI role-based recruitment API
 Frontend/          Vue 3 web application
-Infrastructure/    Local scripts, Docker, environment, CI/CD placeholders
+Infrastructure/    Local scripts, Docker, environment, CI/CD workflow
 Data/              Raw and sample data
-Artifacts/         Generated models and reports
-Docs/              Architecture, demo, ML, NLP, backend, frontend docs
+Artifacts/         Generated models, reports, and local demo state
+Docs/              Architecture, demo, validation, and ML docs
 Tests/             Integration and smoke tests
-Tools/             Maintenance scripts and notebooks
+Tools/             Reserved for maintenance scripts and notebooks
 ```
 
 Detailed architecture document:
@@ -41,12 +41,24 @@ Data/raw/data_jobs.csv
 
 Frontend/TalentBridgeWeb
   -> Backend/TalentBridgeAPI
+  -> /api/v1 platform routes
   -> NLP/CVExtraction
   -> DocumentAI/CVQualityScoring
   -> Recommendation/JobRecommendation
   -> SQL Server warehouse jobs
+  -> Artifacts/platform_store.json for local demo state
   -> Frontend results
 ```
+
+The final application flow is role-based:
+
+```text
+candidate -> CV upload, job discovery, application tracking, notifications
+recruiter -> company jobs, candidate search, CV preview, application decisions
+admin -> monitoring, users/jobs/applications overview, audit, demo reset
+```
+
+The backend also keeps technical AI endpoints for direct validation: `/extract`, `/match-jobs`, `/classify-cv-quality`, `/analyze-cv-full`, `/analyses`, and `/analyses/{analysis_id}`.
 
 ## Key Projects
 
@@ -68,12 +80,25 @@ Frontend/TalentBridgeWeb
 Recommended launcher:
 
 ```powershell
+.\start_talent_bridge.ps1
+```
+
+Run with validation checks:
+
+```powershell
+.\start_talent_bridge.ps1 -RunChecks
+```
+
+Implementation launcher:
+
+```powershell
 .\Infrastructure\scripts\start_local.ps1
 ```
 
 Double-click wrapper:
 
 ```text
+start_talent_bridge.bat
 Infrastructure/scripts/start_local.bat
 ```
 
@@ -117,9 +142,18 @@ cv.job_match_result
 cv.vw_analysis_summary
 cv.vw_match_detail
 cv.vw_candidate_skill
+platform users/jobs/applications/CVs/notifications tables from migration 008
 ```
 
 The backend uses `DW_DATAJOBS_CONNECTION_STRING` if provided. Otherwise it defaults to local trusted SQL Server connection for `DW_DataJobs`.
+
+Current platform runtime state is persisted locally in:
+
+```text
+Artifacts/platform_store.json
+```
+
+The SQL `platform.*` migration prepares a production persistence target, but the demo runtime currently uses the JSON store.
 
 ## NLP Matching
 
@@ -205,10 +239,12 @@ Backend/domain compile:
 python -m compileall -q Backend/TalentBridgeAPI NLP DocumentAI Recommendation MachineLearning
 ```
 
-Smoke test:
+Smoke and integration tests:
 
 ```bash
-python Backend/TalentBridgeAPI/scripts/smoke_test_demo_logic.py
+python Tests/smoke/test_demo_logic.py
+python Tests/smoke/test_platform_workflows.py
+python Tests/integration/test_sql_ml_views.py
 ```
 
 Frontend build:

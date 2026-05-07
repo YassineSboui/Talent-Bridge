@@ -37,8 +37,29 @@ Backend/TalentBridgeAPI/app/platform/
 1. Users authenticate through `/api/v1/auth/*`.
 2. Role-based dependencies protect candidate, recruiter, and admin endpoints.
 3. Business routes call domain modules for CV quality, extraction, and matching.
-4. In-memory store supports demo workflows.
-5. SQL migration exists for future persistent platform tables.
+4. A local JSON-backed demo store supports runtime workflows.
+5. SQL migration `008_create_platform_business_tables.sql` prepares future persistent platform tables.
+
+Runtime demo state is saved at:
+
+```text
+Artifacts/platform_store.json
+```
+
+The current platform runtime uses this JSON store. The `platform.*` SQL tables are available as the production persistence target, but are not the default runtime repository yet.
+
+## Technical AI Endpoints
+
+The platform uses `/api/v1/*` routes, but direct AI validation endpoints are still available:
+
+```text
+POST /extract
+POST /match-jobs
+POST /classify-cv-quality
+POST /analyze-cv-full
+GET /analyses
+GET /analyses/{analysis_id}
+```
 
 ## Important Demo Users
 
@@ -68,3 +89,4 @@ python Tests/smoke/test_platform_workflows.py
 - Candidate/recruiter/admin workflows exist.
 - Backend consumes AI modules but does not merge them.
 - Platform business tables migration exists.
+- Demo state persistence is documented separately from production SQL tables.

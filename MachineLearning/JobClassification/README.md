@@ -29,6 +29,13 @@ DW_DataJobs.dbo.vw_ml_classification_training
 4. Train Logistic Regression and SGD candidates.
 5. Select best model by macro F1.
 
+The implementation is centralized in:
+
+```text
+MachineLearning/SharedML/src/train_ml_objectives.py
+Backend/TalentBridgeAPI/scripts/train_ml_objectives.py
+```
+
 ## Latest SQL-Based Metrics
 
 Remote classification:
@@ -55,9 +62,12 @@ Artifacts/models/ml/full_time_classifier_model.pkl
 Artifacts/reports/ml/ml_objectives_metrics.json
 ```
 
+If old classifier artifacts exist from earlier iterations, they are legacy outputs; the current final classifiers are the remote and full-time artifacts above.
+
 ## Teacher Validation Checklist
 
 - Uses cleaned SQL views.
+- Implementation path is documented.
 - Has two classification targets.
 - Avoids target leakage.
 - Reports accuracy, macro F1, weighted F1.

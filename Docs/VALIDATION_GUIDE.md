@@ -10,13 +10,13 @@ This guide lets a teacher validate each mini-project independently.
 | BI dashboard | `BI/` | Visualize IT job market trends | Power BI `.pbix` |
 | NLP CV extraction | `NLP/CVExtraction/` | Extract entities from CV PDFs | spaCy model and API extraction |
 | Skill extraction / normalization | `NLP/SkillExtraction/` | Normalize skills across CVs/jobs | alias-normalized skill lists |
-| NLP CV-job matching | `NLP/CVMatching/`, `Recommendation/` | Compute CV-job similarity and score | match results with breakdown |
+| NLP CV-job matching | `NLP/CVMatching/`, `Recommendation/` | Compute CV-job similarity and score | match results with breakdown from `Recommendation/JobRecommendation/src/` |
 | ML salary prediction | `MachineLearning/` | Predict salary from SQL warehouse jobs | regression metrics/model |
 | ML job classification | `MachineLearning/` | Classify remote/full-time job signals | classification metrics/models |
 | ML job segmentation | `MachineLearning/` | Cluster similar jobs | cluster profiles/report |
 | Document AI CV quality | `DocumentAI/` | Classify CV as `Pro` or `Non Pro` | quality score and suggestions |
 | Backend platform | `Backend/` | Role-based recruitment API | `/api/v1` routes |
-| Frontend platform | `Frontend/` | Role-based SaaS UI | Vue app build and pages |
+| Frontend platform | `Frontend/` | Role-based SaaS UI | Vue app build and role workflows |
 | Infrastructure | `Infrastructure/` | Local/deployment scripts | launcher, Docker, compose, CI |
 
 ## Global Verification Commands
@@ -54,3 +54,21 @@ DW_DataJobs.dbo.vw_ml_segmentation_training
 ```
 
 `Data/raw/data_jobs.csv` is only the ETL raw source or development fallback.
+
+## Platform Runtime Validation
+
+The role-based platform is exposed through `/api/v1/*` routes and uses these demo accounts:
+
+```text
+candidate@talentbridge.local / candidate123
+recruiter@talentbridge.local / recruiter123
+admin@talentbridge.local / admin123
+```
+
+Local demo state is persisted in:
+
+```text
+Artifacts/platform_store.json
+```
+
+Use the admin `Reset demo data` action or delete that file to return to seeded demo data. SQL migration `DataPlatform/Warehouse/migrations/008_create_platform_business_tables.sql` documents the future production platform tables.

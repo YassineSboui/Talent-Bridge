@@ -7,7 +7,7 @@ Groups similar jobs into clusters.
 Technology:
 
 ```text
-K-Means with optional HDBSCAN candidate
+MiniBatchKMeans with optional HDBSCAN candidate
 ```
 
 ## Why It Exists
@@ -31,6 +31,13 @@ DW_DataJobs.dbo.vw_ml_segmentation_training
 7. Select best clustering by silhouette score.
 8. Generate cluster profiles.
 
+The implementation is centralized in:
+
+```text
+MachineLearning/SharedML/src/train_ml_objectives.py
+Backend/TalentBridgeAPI/scripts/train_ml_objectives.py
+```
+
 ## Latest SQL-Based Result
 
 ```text
@@ -50,6 +57,7 @@ Artifacts/reports/ml/job_cluster_profiles.json
 ## Teacher Validation Checklist
 
 - Uses SQL warehouse data.
+- Implementation path is documented.
 - Tests multiple cluster counts.
 - Produces cluster profiles.
 - Explains silhouette limitation.

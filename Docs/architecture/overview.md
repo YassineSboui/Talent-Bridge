@@ -6,9 +6,10 @@ Runtime flow:
 
 ```text
 Frontend/TalentBridgeWeb
--> Backend/TalentBridgeAPI
+-> Backend/TalentBridgeAPI /api/v1 platform routes
 -> NLP / DocumentAI / Recommendation modules
 -> DataPlatform SQL Server warehouse
+-> Artifacts/platform_store.json for local demo state
 -> Backend response
 -> Frontend UI
 ```
@@ -36,11 +37,15 @@ Main domains:
 
 - `DataPlatform`: ETL, warehouse views, SQL scripts.
 - `BI`: Power BI dashboard assets.
-- `NLP`: CV extraction, skill normalization, semantic matching.
+- `NLP`: CV extraction and skill normalization.
 - `MachineLearning`: salary regression, job classification, K-Means segmentation.
 - `DocumentAI`: CV quality scoring.
-- `Recommendation`: job ranking and explanations.
-- `Backend`: API orchestration.
+- `Recommendation`: semantic matching, job ranking, and explanations.
+- `Backend`: API orchestration, auth/RBAC, platform workflows, and technical AI validation endpoints.
 - `Frontend`: Vue application.
-- `Infrastructure`: scripts, Docker, environment, CI/CD placeholders.
-- `Artifacts`: generated models and reports.
+- `Infrastructure`: scripts, Docker, environment templates, and CI workflow.
+- `Artifacts`: generated models, reports, and local JSON demo state.
+
+Platform routes are registered from `Backend/TalentBridgeAPI/app/platform/api.py` and implemented under `Backend/TalentBridgeAPI/app/platform/routers/`.
+
+The local demo store is `Artifacts/platform_store.json`. SQL migration `008_create_platform_business_tables.sql` prepares the future `platform.*` persistence layer.

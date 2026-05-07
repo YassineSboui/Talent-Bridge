@@ -7,6 +7,8 @@ Provides local startup, Docker, Compose, environment templates, and CI workflow.
 ## Main Files
 
 ```text
+start_talent_bridge.ps1
+start_talent_bridge.bat
 Infrastructure/scripts/start_local.ps1
 Infrastructure/scripts/start_local.bat
 Infrastructure/docker/backend.Dockerfile
@@ -45,9 +47,11 @@ CI:
 
 ```text
 compiles Python
-runs smoke test
+runs Tests/smoke/test_demo_logic.py
 builds frontend
 ```
+
+Run `Tests/smoke/test_platform_workflows.py` and `Tests/integration/test_sql_ml_views.py` locally for the fuller final validation suite.
 
 ## Teacher Validation Checklist
 
