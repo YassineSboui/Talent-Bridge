@@ -6,7 +6,7 @@ import { authApi } from './modules/auth/auth.api'
 import { companiesApi } from './modules/companies/companies.api'
 import { cvApi } from './modules/cv/cv.api'
 import { jobsApi } from './modules/jobs/jobs.api'
-import { matchingApi } from './modules/matching/matching.api'
+import { matchingApi, skillGapApi } from './modules/matching/matching.api'
 import { notificationsApi } from './modules/notifications/notifications.api'
 import { candidatesApi } from './modules/profiles/candidates.api'
 import { profilesApi } from './modules/profiles/profiles.api'
@@ -43,6 +43,10 @@ const activeAdminTab = ref('monitoring')
 const applyJob = ref(null)
 const applyFile = ref(null)
 const applyLoading = ref(false)
+const skillGapJob = ref(null)
+const skillGapResult = ref(null)
+const skillGapLoading = ref(false)
+const topMissingSkills = ref([])
 const profileOpen = ref(false)
 const profileForm = ref({})
 const authMode = ref('login')
@@ -191,6 +195,32 @@ async function uploadCv(event) {
 async function apply(jobId) {
   applyJob.value = jobs.value.find((job) => job.id === jobId)
   applyFile.value = null
+}
+
+async function viewSkillGap(jobId) {
+  const job = jobs.value.find((j) => j.id === jobId)
+  skillGapJob.value = job || { id: jobId, title: 'Job' }
+  skillGapResult.value = null
+  skillGapLoading.value = true
+  try {
+    const payload = await skillGapApi.jobGap(jobId)
+    skillGapResult.value = payload.skill_gap
+  } catch (err) {
+    toast.value = err.message || 'Could not load skill gap analysis.'
+    skillGapJob.value = null
+    setTimeout(() => { toast.value = '' }, 3500)
+  } finally {
+    skillGapLoading.value = false
+  }
+}
+
+async function loadTopMissing() {
+  try {
+    const payload = await skillGapApi.topMissing(8)
+    topMissingSkills.value = payload.top_missing || []
+  } catch (_err) {
+    topMissingSkills.value = []
+  }
 }
 
 async function confirmApply() {
@@ -550,6 +580,7 @@ function logout() {
         <div class="tab-switcher panel">
           <button type="button" :class="activeCandidateTab === 'jobs' ? '' : 'secondary'" @click="activeCandidateTab = 'jobs'">Looking for Job</button>
           <button type="button" :class="activeCandidateTab === 'cv' ? '' : 'secondary'" @click="activeCandidateTab = 'cv'">Enhance CV</button>
+          <button type="button" :class="activeCandidateTab === 'gap' ? '' : 'secondary'" @click="activeCandidateTab = 'gap'; loadTopMissing()">Skill Gap</button>
         </div>
 
         <section v-if="activeCandidateTab === 'cv'" class="content-grid">
@@ -580,6 +611,31 @@ function logout() {
 
         </section>
 
+        <section v-if="activeCandidateTab === 'gap'" class="content-grid wide-left">
+          <div class="panel">
+            <div class="panel-heading"><span>Gap AI</span><h2>Top Missing Skills</h2></div>
+            <p class="muted">Skills you're most commonly missing across all published jobs, ranked by market demand. Click any job's ⚡ Skill Gap button for a job-specific breakdown.</p>
+            <div v-if="topMissingSkills.length === 0" class="empty-state">No skill gap data yet. Make sure your profile has skills set, then this panel will populate automatically.</div>
+            <article v-for="item in topMissingSkills" :key="item.skill" class="match-card">
+              <div class="match-header">
+                <div>
+                  <small>Missing in {{ item.missing_in_jobs }} job{{ item.missing_in_jobs === 1 ? '' : 's' }} · demand {{ Math.round(item.demand_score * 100) }}%</small>
+                  <h3>{{ item.skill }}</h3>
+                </div>
+                <strong :class="item.priority === 'critical' ? 'danger' : item.priority === 'high' ? 'warning' : ''">{{ item.priority }}</strong>
+              </div>
+              <div class="chips">
+                <a v-for="res in item.resources.slice(0, 2)" :key="res.url" :href="res.url" target="_blank" rel="noopener" class="chip chip-link">{{ res.label }}</a>
+              </div>
+            </article>
+          </div>
+          <div class="panel">
+            <div class="panel-heading"><span>Jobs</span><h2>Analyze a Specific Job</h2></div>
+            <p class="muted">Browse the job list and click <strong>⚡ Skill Gap</strong> on any job card to see a full breakdown of matched vs. missing skills with learning resources.</p>
+            <div class="ai-steps"><span>Matched skills highlighted in green</span><span>Missing skills sorted by priority</span><span>Critical gaps shown first</span><span>Curated learning links for each gap</span></div>
+          </div>
+        </section>
+
         <section v-if="activeCandidateTab === 'jobs'" class="content-grid wide-left">
           <div class="panel">
             <div class="panel-heading"><span>Jobs</span><h2>Recommended Marketplace</h2></div>
@@ -601,7 +657,10 @@ function logout() {
               <div class="match-header"><div><small>{{ job.category }} · {{ job.schedule_type }} · {{ job.work_mode }}</small><h3>{{ job.title }}</h3><p>{{ job.description }}</p></div><strong>{{ job.salary_year_avg ? `${Math.round(job.salary_year_avg / 1000)}k` : '-' }}</strong></div>
               <div class="chips"><span v-for="skill in job.required_skills" :key="skill" class="chip">{{ skill }}</span></div>
               <div class="mini-metrics"><span>Class {{ job.classification?.remote_class }}</span><span>Segment {{ job.segmentation?.segment_name }}</span><span>Salary {{ job.estimated_salary_range?.[0] }}-{{ job.estimated_salary_range?.[1] }}</span></div>
-              <button class="secondary" type="button" :disabled="appliedJobIds.has(job.id) || job.has_applied" @click="apply(job.id)">{{ appliedJobIds.has(job.id) || job.has_applied ? 'Applied' : 'Apply with CV' }}</button>
+              <div class="card-actions">
+                <button class="secondary" type="button" :disabled="appliedJobIds.has(job.id) || job.has_applied" @click="apply(job.id)">{{ appliedJobIds.has(job.id) || job.has_applied ? 'Applied' : 'Apply with CV' }}</button>
+                <button class="secondary gap-btn" type="button" @click="viewSkillGap(job.id)">⚡ Skill Gap</button>
+              </div>
             </article>
             <div v-if="jobLoading" class="skeleton-list"><span></span><span></span><span></span></div>
             <p v-if="!jobs.length && !jobLoading" class="empty-state">No jobs match your filters. Try a broader keyword or remove salary/location filters.</p>
@@ -707,6 +766,67 @@ function logout() {
           <label>PDF CV for this application<input type="file" accept="application/pdf" @change="applyFile = $event.target.files?.[0]" /></label>
           <div v-if="applyLoading" class="ai-steps"><span>Uploading selected CV...</span><span>Extracting application CV...</span><span>Creating application...</span></div>
           <button class="submit-application-button" type="button" :disabled="applyLoading" @click="confirmApply">Send application</button>
+        </aside>
+      </div>
+
+      <div v-if="skillGapJob" class="drawer-backdrop" @click.self="skillGapJob = null">
+        <aside class="application-modal skill-gap-modal">
+          <button class="drawer-close" type="button" @click="skillGapJob = null">Close</button>
+          <small>⚡ Skill Gap Analysis</small>
+          <h2>{{ skillGapJob.title }}</h2>
+
+          <div v-if="skillGapLoading" class="ai-steps">
+            <span>Loading candidate skills...</span><span>Comparing to job requirements...</span><span>Prioritizing gaps...</span>
+          </div>
+
+          <template v-if="skillGapResult && !skillGapLoading">
+            <div class="skill-gap-summary">
+              <div class="metric-card" :class="skillGapResult.readiness_level === 'perfect' ? 'success' : skillGapResult.readiness_level === 'strong' ? '' : 'danger'">
+                <small>Readiness</small>
+                <strong>{{ skillGapResult.readiness_level }}</strong>
+                <span>{{ skillGapResult.coverage_percentage }}% coverage · {{ skillGapResult.matched_skills.length }}/{{ skillGapResult.job_skills_count }} skills</span>
+              </div>
+            </div>
+
+            <div v-if="skillGapResult.matched_skills.length" class="gap-section">
+              <h3>✅ Skills you already have ({{ skillGapResult.matched_skills.length }})</h3>
+              <div class="chips">
+                <span v-for="skill in skillGapResult.matched_skills" :key="skill" class="chip chip-matched">{{ skill }}</span>
+              </div>
+            </div>
+
+            <div v-if="skillGapResult.core_gaps.length" class="gap-section">
+              <h3>🚨 Critical gaps — must-have for this role</h3>
+              <div class="chips">
+                <span v-for="skill in skillGapResult.core_gaps" :key="skill" class="chip chip-critical">{{ skill }}</span>
+              </div>
+            </div>
+
+            <div v-if="skillGapResult.gaps_by_priority.length" class="gap-section">
+              <h3>📋 All missing skills by priority ({{ skillGapResult.missing_skills.length }})</h3>
+              <article v-for="gap in skillGapResult.gaps_by_priority" :key="gap.skill" class="match-card gap-item">
+                <div class="match-header">
+                  <div>
+                    <small>demand {{ Math.round(gap.demand_score * 100) }}% of market jobs</small>
+                    <h3>{{ gap.skill }}</h3>
+                  </div>
+                  <strong :class="gap.priority === 'critical' ? 'chip chip-critical' : gap.priority === 'high' ? 'chip chip-high' : 'chip chip-low'">{{ gap.priority }}</strong>
+                </div>
+                <div class="chips">
+                  <a v-for="res in gap.resources.slice(0, 2)" :key="res.url" :href="res.url" target="_blank" rel="noopener" class="chip chip-link">{{ res.label }}</a>
+                </div>
+              </article>
+            </div>
+
+            <div v-if="skillGapResult.quick_wins.length" class="gap-section">
+              <h3>💡 Quick wins — easy to learn first</h3>
+              <div class="chips">
+                <span v-for="skill in skillGapResult.quick_wins" :key="skill" class="chip">{{ skill }}</span>
+              </div>
+            </div>
+
+            <p v-if="!skillGapResult.missing_skills.length" class="success-banner">🎉 Perfect fit — you have all the required skills for this job!</p>
+          </template>
         </aside>
       </div>
 

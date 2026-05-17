@@ -199,10 +199,16 @@ def reset_platform_demo_data() -> None:
 
 
 def seed_jobs_from_warehouse(company_ids: list[int], recruiter_id: int, limit: int = 120) -> None:
+    if os.getenv("TALENTBRIDGE_SEED_WAREHOUSE_JOBS", "1").lower() in {"0", "false", "no"}:
+        return
     try:
         import pyodbc
     except Exception:
         return
+    try:
+        seed_timeout = int(os.getenv("TALENTBRIDGE_WAREHOUSE_SEED_TIMEOUT", "5"))
+    except ValueError:
+        seed_timeout = 5
     connection_string = os.getenv(
         "DW_DATAJOBS_CONNECTION_STRING",
         "Driver={ODBC Driver 17 for SQL Server};Server=localhost;Database=DW_DataJobs;Trusted_Connection=yes;TrustServerCertificate=yes;",
@@ -225,8 +231,10 @@ def seed_jobs_from_warehouse(company_ids: list[int], recruiter_id: int, limit: i
         ORDER BY has_salary_info DESC, posted_date DESC, job_posting_key DESC;
     """
     try:
-        with pyodbc.connect(connection_string) as connection:
-            rows = connection.cursor().execute(query).fetchall()
+        with pyodbc.connect(connection_string, timeout=seed_timeout) as connection:
+            cursor = connection.cursor()
+            cursor.timeout = seed_timeout
+            rows = cursor.execute(query).fetchall()
     except Exception:
         return
     for index, row in enumerate(rows, start=1):

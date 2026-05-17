@@ -833,3 +833,113 @@ textarea {
 }
 
 .modal-preview { min-height: 260px; }
+
+/* ---- Skill Gap Analyzer styles ---- */
+
+.card-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.card-actions button {
+  flex: 1;
+}
+
+.gap-btn {
+  background: rgba(85, 247, 210, 0.10) !important;
+  border-color: rgba(85, 247, 210, 0.28) !important;
+  color: #55f7d2 !important;
+}
+
+.gap-btn:hover {
+  background: rgba(85, 247, 210, 0.18) !important;
+}
+
+.skill-gap-modal {
+  width: min(700px, calc(100% - 28px));
+  height: min(90vh, 860px);
+}
+
+.skill-gap-summary {
+  display: flex;
+  gap: 12px;
+  margin: 14px 0 20px;
+}
+
+.skill-gap-summary .metric-card {
+  flex: 1;
+}
+
+.gap-section {
+  margin: 20px 0;
+}
+
+.gap-section h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 10px;
+}
+
+.gap-item {
+  margin-bottom: 10px;
+}
+
+.chip {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--line);
+  background: rgba(142, 167, 255, 0.10);
+  color: var(--text);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.chip-matched {
+  background: rgba(85, 247, 210, 0.14);
+  border-color: rgba(85, 247, 210, 0.32);
+  color: #55f7d2;
+}
+
+.chip-critical {
+  background: rgba(255, 124, 157, 0.14);
+  border-color: rgba(255, 124, 157, 0.32);
+  color: #ff7c9d;
+}
+
+.chip-high {
+  background: rgba(240, 195, 106, 0.14);
+  border-color: rgba(240, 195, 106, 0.32);
+  color: #f0c36a;
+}
+
+.chip-low {
+  background: rgba(142, 167, 255, 0.10);
+  border-color: var(--line);
+  color: var(--muted);
+}
+
+.chip-link {
+  cursor: pointer;
+  background: rgba(142, 167, 255, 0.10);
+  border-color: rgba(142, 167, 255, 0.26);
+  color: var(--accent-2);
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.chip-link:hover {
+  background: rgba(142, 167, 255, 0.20);
+}
+

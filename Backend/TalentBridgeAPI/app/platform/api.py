@@ -11,6 +11,7 @@ from .routers.candidate_routes import router as candidate_router
 from .routers.job_routes import router as job_router
 from .routers.matching_routes import router as matching_router
 from .routers.notification_routes import router as notification_router
+from .routers.skill_gap_routes import router as skill_gap_router
 from .routers.profile_routes import router as profile_router
 from .routers.shortlist_routes import router as shortlist_router
 
@@ -23,6 +24,7 @@ api_v1_router.include_router(job_router)
 api_v1_router.include_router(cv_router)
 api_v1_router.include_router(candidate_router)
 api_v1_router.include_router(matching_router)
+api_v1_router.include_router(skill_gap_router)
 api_v1_router.include_router(application_router)
 api_v1_router.include_router(shortlist_router)
 api_v1_router.include_router(notification_router)
