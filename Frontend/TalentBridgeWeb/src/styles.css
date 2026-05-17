@@ -313,6 +313,11 @@ button:disabled { cursor: not-allowed; filter: grayscale(0.7); opacity: 0.62; }
 
 .spaced { margin-top: 14px; }
 .reset-button { margin-bottom: 18px; }
+.compact-button {
+  min-height: 38px;
+  padding: 9px 12px;
+  margin-top: 4px;
+}
 
 .error-banner {
   margin: 22px 0 0;
@@ -435,6 +440,149 @@ button:disabled { cursor: not-allowed; filter: grayscale(0.7); opacity: 0.62; }
 
 .cv-preview summary { cursor: pointer; font-weight: 900; }
 .cv-preview p { margin: 12px 0 0; max-height: 190px; overflow: auto; color: var(--muted); white-space: pre-wrap; }
+
+.schedule-box {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid rgba(142, 167, 255, 0.26);
+  border-radius: 18px;
+  background: rgba(142, 167, 255, 0.08);
+}
+
+.interview-focus-panel {
+  border-color: rgba(240, 195, 106, 0.5);
+  background:
+    linear-gradient(135deg, rgba(240, 195, 106, 0.14), rgba(85, 247, 210, 0.06)),
+    var(--panel);
+}
+
+.interview-focus-panel .match-card {
+  border-color: rgba(240, 195, 106, 0.34);
+}
+
+.schedule-box label { margin-bottom: 0; }
+
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+}
+
+.slot-option {
+  display: flex;
+  grid-template-columns: none;
+  align-items: center;
+  gap: 14px;
+  min-height: 92px;
+  padding: 14px;
+  border: 1px solid rgba(142, 167, 255, 0.24);
+  border-radius: 20px;
+  color: var(--text);
+  background:
+    linear-gradient(135deg, rgba(142, 167, 255, 0.12), rgba(85, 247, 210, 0.05)),
+    rgba(255,255,255,0.045);
+  cursor: pointer;
+  transition: border-color 160ms ease, transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.slot-option:hover {
+  transform: translateY(-2px);
+  border-color: rgba(85, 247, 210, 0.45);
+  box-shadow: 0 18px 36px rgba(0,0,0,0.18);
+}
+
+.slot-option.selected {
+  border-color: rgba(85, 247, 210, 0.72);
+  background:
+    linear-gradient(135deg, rgba(85, 247, 210, 0.18), rgba(142, 167, 255, 0.12)),
+    rgba(255,255,255,0.055);
+}
+
+.slot-option input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+.slot-option span:not(.slot-calendar) {
+  display: grid;
+  gap: 4px;
+}
+
+.slot-option span:not(.slot-calendar) small {
+  color: var(--muted);
+}
+
+.slot-calendar {
+  display: grid;
+  place-items: center;
+  min-width: 58px;
+  min-height: 58px;
+  border: 1px solid rgba(85, 247, 210, 0.28);
+  border-radius: 18px;
+  color: #061321;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 12px 26px rgba(85, 247, 210, 0.14);
+}
+
+.slot-calendar strong { font-size: 24px; line-height: 1; }
+.slot-calendar small { color: rgba(6, 19, 33, 0.72); font-weight: 900; text-transform: uppercase; }
+
+.confirm-slot-button { margin-top: 4px; }
+
+.slot-input-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.datetime-card {
+  position: relative;
+  margin: 0;
+  padding: 15px;
+  border: 1px solid rgba(142, 167, 255, 0.22);
+  border-radius: 20px;
+  background:
+    linear-gradient(135deg, rgba(142, 167, 255, 0.10), rgba(85, 247, 210, 0.045)),
+    rgba(255,255,255,0.035);
+}
+
+.datetime-card span {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.datetime-card input[type="datetime-local"] {
+  min-height: 52px;
+  border-radius: 16px;
+  color-scheme: dark;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.025)),
+    rgba(5, 17, 31, 0.96);
+}
+
+.datetime-card input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 5px;
+  background-color: var(--accent);
+}
+
+.confirmed-box {
+  border-color: rgba(85, 247, 210, 0.34);
+  background: rgba(85, 247, 210, 0.10);
+}
+
+.confirmed-box p { margin: 4px 0 0; color: var(--accent); font-weight: 900; }
+
+.notification-strip {
+  display: grid;
+  gap: 14px;
+}
 
 .chips {
   display: flex;
@@ -665,6 +813,10 @@ textarea {
   border-radius: 20px;
   background: rgba(255,255,255,0.04);
 }
+
+.powerbi-panel, .powerbi-launcher { min-height: auto; }
+.powerbi-launcher { display: grid; gap: 14px; }
+.powerbi-link-grid { display: grid; gap: 14px; }
 
 .modal-grid {
   display: grid;

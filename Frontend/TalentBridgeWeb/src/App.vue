@@ -35,6 +35,9 @@ const jobLoading = ref(false)
 const notifications = ref([])
 const selectedApplication = ref(null)
 const applicationNote = ref('')
+const interviewSlotInputs = ref([''])
+const selectedInterviewSlotId = ref({})
+const interviewDeclineReason = ref({})
 const activeCandidateTab = ref('jobs')
 const activeAdminTab = ref('monitoring')
 const applyJob = ref(null)
@@ -47,11 +50,18 @@ const registerForm = ref({ full_name: '', email: '', password: '', role: 'candid
 const companyForm = ref({ name: '', industry: '', location: '', website: '', description: '' })
 const jobForm = ref({ company_id: '', title: '', category: 'Data Analyst', country: '', city: '', remote: true, schedule_type: 'Full-time', description: '', required_skills: '', salary_year_avg: '' })
 const adminTables = ref({ users: [], companies: [], jobs: [], auditLogs: [] })
+const powerBiReport = ref(null)
+const minInterviewDateTime = computed(() => {
+  const date = new Date(Date.now() + 5 * 60 * 1000)
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+  return localDate.toISOString().slice(0, 16)
+})
 
 const role = computed(() => authStore.user?.role || 'visitor')
 const cvQuality = computed(() => cvResult.value?.cv?.quality?.quality_score || (authStore.user?.role === 'candidate' ? 88 : 0))
 const appliedJobIds = computed(() => new Set(applications.value.map((item) => item.job_id)))
 const salaryRangeLabel = computed(() => `${Number(filters.value.salaryMin).toLocaleString()} - ${Number(filters.value.salaryMax).toLocaleString()}`)
+const pendingInterviewApplications = computed(() => applications.value.filter((application) => application.status === 'InterviewTimeProposed'))
 
 onMounted(async () => {
   if (!authStore.token) return
@@ -107,7 +117,8 @@ async function loadDashboard() {
   if (!authStore.user) return
   page.value = 1
   await loadJobs(false)
-  notifications.value = authStore.user.role === 'candidate' ? (await notificationsApi.list()).notifications || [] : []
+  notifications.value = (await notificationsApi.list()).notifications || []
+  powerBiReport.value = await adminApi.powerbi()
   if (role.value === 'candidate') {
     matches.value = (await matchingApi.candidateJobs()).matches || []
     applications.value = (await applicationsApi.mine()).applications || []
@@ -210,6 +221,7 @@ async function openApplication(application) {
   if (role.value !== 'recruiter') return
   selectedApplication.value = (await applicationsApi.detail(application.id)).application
   applicationNote.value = selectedApplication.value.recruiter_note || ''
+  interviewSlotInputs.value = ['', '']
 }
 
 async function updateApplicationStatus(status) {
@@ -218,6 +230,56 @@ async function updateApplicationStatus(status) {
   applications.value = (await applicationsApi.recruiter()).applications || []
   toast.value = `Application updated to ${status}`
   setTimeout(() => { toast.value = '' }, 3500)
+}
+
+async function proposeInterviewSlots() {
+  if (!selectedApplication.value) return
+  const slots = interviewSlotInputs.value.map((item) => item ? new Date(item).toISOString() : '').filter(Boolean)
+  if (!slots.length) {
+    toast.value = 'Add at least one future interview time.'
+    setTimeout(() => { toast.value = '' }, 3500)
+    return
+  }
+  try {
+    selectedApplication.value = (await applicationsApi.proposeInterviewSlots(selectedApplication.value.id, slots, applicationNote.value)).application
+    applications.value = (await applicationsApi.recruiter()).applications || []
+    notifications.value = (await notificationsApi.list()).notifications || []
+    toast.value = 'Interview slots sent to the candidate.'
+  } catch (err) {
+    toast.value = err.message || 'Interview slots must be valid future dates.'
+  }
+  setTimeout(() => { toast.value = '' }, 4500)
+}
+
+function addInterviewSlotInput() {
+  interviewSlotInputs.value = [...interviewSlotInputs.value, '']
+}
+
+function removeInterviewSlotInput(index) {
+  interviewSlotInputs.value = interviewSlotInputs.value.filter((_, itemIndex) => itemIndex !== index)
+  if (!interviewSlotInputs.value.length) interviewSlotInputs.value = ['']
+}
+
+async function selectInterviewSlot(application) {
+  const slotId = selectedInterviewSlotId.value[application.id]
+  if (!slotId) {
+    toast.value = 'Choose one proposed interview time first.'
+    setTimeout(() => { toast.value = '' }, 3500)
+    return
+  }
+  await applicationsApi.selectInterviewSlot(application.id, slotId)
+  applications.value = (await applicationsApi.mine()).applications || []
+  notifications.value = (await notificationsApi.list()).notifications || []
+  toast.value = 'Interview time confirmed.'
+  setTimeout(() => { toast.value = '' }, 3500)
+}
+
+async function declineInterviewSlots(application) {
+  await applicationsApi.declineInterviewSlots(application.id, interviewDeclineReason.value[application.id] || '')
+  applications.value = (await applicationsApi.mine()).applications || []
+  notifications.value = (await notificationsApi.list()).notifications || []
+  toast.value = 'Recruiter notified to propose new interview times.'
+  setTimeout(() => { toast.value = '' }, 4000)
 }
 
 async function saveApplicationNote() {
@@ -342,12 +404,29 @@ function formatStatus(value) {
     Applied: 'Applied',
     UnderReview: 'Under Review',
     InterviewRequested: 'Interview Requested',
+    InterviewTimeProposed: 'Choose Interview Time',
+    InterviewSlotsDeclined: 'Waiting New Interview Times',
     Accepted: 'Accepted',
     Rejected: 'Rejected',
     shortlisted: 'Shortlisted',
     submitted: 'Applied',
   }
   return labels[value] || String(value || '-').replace(/([a-z])([A-Z])/g, '$1 $2')
+}
+
+function formatDateTime(value) {
+  if (!value) return '-'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value
+  return date.toLocaleString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+}
+
+function openPowerBiReport() {
+  if (powerBiReport.value?.report_path) window.open(`file:///${powerBiReport.value.report_path.replace(/\\/g, '/')}`, '_blank')
+}
+
+function openPowerBiLink(link) {
+  if (link?.url) window.open(link.url, '_blank')
 }
 
 function formatDate(value) {
@@ -451,6 +530,23 @@ function logout() {
           <div class="metric-card"><small>Notifications</small><strong>{{ notifications.length }}</strong><span>application updates</span></div>
         </section>
 
+        <section class="panel powerbi-launcher"><div class="panel-heading no-margin"><span>Power BI</span><h2>Candidate KPI</h2></div><p class="muted">Open the candidate-only Power BI report in a new tab. This role receives only the candidate dashboard link.</p><button v-for="link in powerBiReport?.links || []" :key="link.role" type="button" @click="openPowerBiLink(link)">{{ link.title }}</button></section>
+
+        <section v-if="pendingInterviewApplications.length" class="panel interview-focus-panel">
+          <div class="panel-heading"><span>Interview</span><h2>Choose your interview time</h2></div>
+          <article v-for="application in pendingInterviewApplications" :key="`pending-interview-${application.id}`" class="match-card">
+            <small>{{ application.company }} · {{ application.job_title }}</small>
+            <h3>You have been selected</h3>
+            <p class="muted">The recruiter proposed these times. Choose one that fits you, or ask for new slots.</p>
+            <div class="slot-grid">
+              <label v-for="slot in application.interview_slots" :key="slot.id" class="slot-option" :class="selectedInterviewSlotId[application.id] === slot.id ? 'selected' : ''"><input v-model="selectedInterviewSlotId[application.id]" type="radio" :value="slot.id" /><span class="slot-calendar"><strong>{{ new Date(slot.start_at).toLocaleDateString(undefined, { day: '2-digit' }) }}</strong><small>{{ new Date(slot.start_at).toLocaleDateString(undefined, { month: 'short' }) }}</small></span><span><strong>{{ new Date(slot.start_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }) }}</strong><small>{{ new Date(slot.start_at).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric' }) }}</small></span></label>
+            </div>
+            <button class="confirm-slot-button" type="button" @click="selectInterviewSlot(application)">Confirm selected time</button>
+            <label class="spaced">If none fit, explain why<textarea v-model="interviewDeclineReason[application.id]" placeholder="Example: I am only available after 17:00 this week."></textarea></label>
+            <button class="secondary" type="button" @click="declineInterviewSlots(application)">These times do not fit</button>
+          </article>
+        </section>
+
         <div class="tab-switcher panel">
           <button type="button" :class="activeCandidateTab === 'jobs' ? '' : 'secondary'" @click="activeCandidateTab = 'jobs'">Looking for Job</button>
           <button type="button" :class="activeCandidateTab === 'cv' ? '' : 'secondary'" @click="activeCandidateTab = 'cv'">Enhance CV</button>
@@ -513,7 +609,11 @@ function logout() {
           </div>
           <div class="panel">
             <div class="panel-heading"><span>Apps</span><h2>My Applications</h2></div>
-            <article v-for="application in applications" :key="application.id" class="match-card"><div class="match-header"><div><small>{{ application.company }} · {{ formatDate(application.application_date) }}</small><h3>{{ application.job_title }}</h3><p>Current step: {{ formatStatus(application.current_step) }} <span v-if="application.recruiter_decision">· Decision: {{ formatStatus(application.recruiter_decision) }}</span></p></div><strong class="status-badge">{{ formatStatus(application.status) }}</strong></div></article>
+            <article v-for="application in applications" :key="application.id" class="match-card">
+              <div class="match-header"><div><small>{{ application.company }} · {{ formatDate(application.application_date) }}</small><h3>{{ application.job_title }}</h3><p>Current step: {{ formatStatus(application.current_step) }} <span v-if="application.recruiter_decision">· Decision: {{ formatStatus(application.recruiter_decision) }}</span></p></div><strong class="status-badge">{{ formatStatus(application.status) }}</strong></div>
+              <div v-if="application.status === 'InterviewTimeProposed'" class="schedule-box"><strong>Action needed</strong><p class="muted">Choose your interview time in the highlighted Interview panel above.</p></div>
+              <div v-if="application.selected_interview_slot" class="schedule-box confirmed-box"><strong>Confirmed interview</strong><p>{{ formatDateTime(application.selected_interview_slot.start_at) }}</p></div>
+            </article>
             <div class="panel-heading compact-heading"><span>Notifications</span><h2>Recent Updates</h2></div>
             <article v-for="notification in notifications.slice(0, 4)" :key="notification.id" class="match-card"><small>{{ notification.type }} · {{ notification.read ? 'read' : 'new' }}</small><h3>{{ notification.title }}</h3><p class="muted">{{ notification.message }}</p><button v-if="!notification.read" class="secondary" type="button" @click="markNotificationRead(notification.id)">Mark read</button></article>
           </div>
@@ -526,7 +626,13 @@ function logout() {
           <div class="metric-card"><small>Applications</small><strong>{{ applications.length }}</strong><span>received for your jobs</span></div>
           <div class="metric-card success"><small>Candidate Matches</small><strong>{{ matches.length }}</strong><span>AI-ranked talent</span></div>
           <div class="metric-card"><small>Candidate Pool</small><strong>{{ candidates.length }}</strong><span>searchable profiles</span></div>
+          <div class="metric-card"><small>Notifications</small><strong>{{ notifications.length }}</strong><span>interview responses</span></div>
         </section>
+        <section v-if="notifications.length" class="panel notification-strip">
+          <div class="panel-heading no-margin"><span>Updates</span><h2>Recruiter Notifications</h2></div>
+          <article v-for="notification in notifications.slice(0, 3)" :key="notification.id" class="match-card"><small>{{ notification.type }} · {{ notification.read ? 'read' : 'new' }}</small><h3>{{ notification.title }}</h3><p class="muted">{{ notification.message }}</p><button v-if="!notification.read" class="secondary" type="button" @click="markNotificationRead(notification.id)">Mark read</button></article>
+        </section>
+        <section class="panel powerbi-launcher"><div class="panel-heading no-margin"><span>Power BI</span><h2>Recruiter KPI</h2></div><p class="muted">Open the recruiter-only Power BI report in a new tab. This role receives only the recruiter dashboard link.</p><button v-for="link in powerBiReport?.links || []" :key="link.role" type="button" @click="openPowerBiLink(link)">{{ link.title }}</button></section>
         <section class="content-grid">
           <div class="panel"><div class="panel-heading"><span>Job AI</span><h2>Create Job Offer</h2></div><p class="muted">Create a role and Talent Bridge will classify, segment, and estimate salary signals.</p><div class="filter-grid"><label>Company ID<input v-model="jobForm.company_id" type="number" /></label><label>Title<input v-model="jobForm.title" /></label><label>Category<input v-model="jobForm.category" /></label><label>Country<input v-model="jobForm.country" /></label><label>City<input v-model="jobForm.city" /></label><label>Salary<input v-model="jobForm.salary_year_avg" type="number" /></label><label>Skills<input v-model="jobForm.required_skills" placeholder="python, sql" /></label><label>Description<input v-model="jobForm.description" /></label></div><button class="secondary" type="button" @click="createRecruiterJob">Create and publish job</button><div class="ai-steps"><span>Detecting required skills</span><span>Classifying job type</span><span>Segmenting role</span><span>Estimating salary</span></div></div>
           <div class="panel"><div class="panel-heading"><span>Candidates</span><h2>Candidate Search</h2></div><article v-for="candidate in candidates" :key="candidate.candidate_id" class="match-card"><div class="match-header"><div><small>{{ candidate.title }} · {{ candidate.location }}</small><h3>{{ candidate.name }}</h3><p>{{ candidate.skills?.slice(0, 5).join(', ') }}</p></div><strong>{{ candidate.cv_quality_score || '-' }}</strong></div></article></div>
@@ -552,6 +658,7 @@ function logout() {
 
         <div class="tab-switcher panel">
           <button type="button" :class="activeAdminTab === 'monitoring' ? '' : 'secondary'" @click="activeAdminTab = 'monitoring'">AI Monitoring</button>
+          <button type="button" :class="activeAdminTab === 'powerbi' ? '' : 'secondary'" @click="activeAdminTab = 'powerbi'">Power BI KPI</button>
           <button type="button" :class="activeAdminTab === 'management' ? '' : 'secondary'" @click="activeAdminTab = 'management'">Data Management</button>
           <button type="button" :class="activeAdminTab === 'audit' ? '' : 'secondary'" @click="activeAdminTab = 'audit'">Audit & Retry</button>
         </div>
@@ -559,6 +666,22 @@ function logout() {
         <section v-if="activeAdminTab === 'monitoring'" class="content-grid">
           <div class="panel"><div class="panel-heading"><span>AI Ops</span><h2>Processing Monitor</h2></div><article v-for="job in aiJobs" :key="job.id" class="match-card"><div class="match-header"><div><small>{{ job.type }} · {{ job.status }}</small><h3>{{ job.entity || 'AI job' }}</h3><p>{{ job.error || `${job.duration_ms || 0} ms processing time` }}</p></div><strong>{{ job.status === 'failed' ? '!' : 'OK' }}</strong></div></article></div>
           <div class="panel"><div class="panel-heading"><span>Control</span><h2>Platform Supervision</h2></div><p class="muted">Monitor CV extraction, matching, recommendations, salary estimation, audit events, and failed processing jobs from one admin workspace.</p><div class="ai-steps"><span>CV extraction health</span><span>Matching engine health</span><span>Recommendation queue</span><span>Audit log review</span></div></div>
+        </section>
+
+        <section v-if="activeAdminTab === 'powerbi'" class="content-grid wide-left">
+          <div class="panel powerbi-panel">
+            <div class="panel-heading"><span>Power BI</span><h2>{{ powerBiReport?.title || 'Project KPI Dashboard' }}</h2></div>
+            <div class="powerbi-link-grid">
+              <article v-for="link in powerBiReport?.links || []" :key="link.role" class="match-card"><small>{{ link.role }} access</small><h3>{{ link.title }}</h3><p class="muted">{{ link.description }}</p><button class="secondary" type="button" @click="openPowerBiLink(link)">Open Power BI dashboard</button></article>
+            </div>
+            <div class="empty-state spaced">
+              <strong>Existing report detected: {{ powerBiReport?.report_exists ? 'yes' : 'no' }}</strong>
+              <p>{{ powerBiReport?.message }}</p>
+              <p class="muted">Report file: {{ powerBiReport?.report_path }}</p>
+              <button class="secondary" type="button" :disabled="!powerBiReport?.report_exists" @click="openPowerBiReport">Open existing PBIX report</button>
+            </div>
+          </div>
+          <div class="panel"><div class="panel-heading"><span>Scope</span><h2>Role links</h2></div><p class="muted">The app only opens role-specific Power BI reports. It does not mount Power BI inside the app or rely on Azure Embedded configuration.</p><p class="warning-banner">For real separation, publish separate Candidate, Recruiter, and Admin reports, then configure the three role URLs.</p></div>
         </section>
 
         <section v-if="activeAdminTab === 'management'" class="content-grid">
@@ -643,7 +766,18 @@ function logout() {
                 <article><small>Certifications</small><p>{{ Array.isArray(selectedApplication.cv?.extraction?.certifications) ? selectedApplication.cv.extraction.certifications.join(', ') : selectedApplication.cv?.extraction?.certifications }}</p></article>
                 <article><small>Match score</small><strong>{{ selectedApplication.matching?.score }}</strong><p>{{ selectedApplication.matching?.explanation?.join(' · ') }}</p></article>
               </div>
-              <button type="button" @click="updateApplicationStatus('InterviewRequested')">Invite to interview</button>
+              <div class="schedule-box">
+                <strong>Propose interview times</strong>
+                <p class="muted">Add one or multiple future slots. The candidate will receive a notification and choose the best time.</p>
+                <div class="slot-input-grid">
+                  <label v-for="(_, index) in interviewSlotInputs" :key="`slot-input-${index}`" class="datetime-card"><span>Interview slot {{ index + 1 }}</span><input v-model="interviewSlotInputs[index]" type="datetime-local" :min="minInterviewDateTime" /><button v-if="interviewSlotInputs.length > 1" class="secondary compact-button" type="button" @click="removeInterviewSlotInput(index)">Remove slot</button></label>
+                </div>
+                <button class="secondary" type="button" @click="addInterviewSlotInput">Add another slot</button>
+                <button class="spaced" type="button" @click="proposeInterviewSlots">Send slots to candidate</button>
+                <p v-if="selectedApplication.interview_status" class="muted spaced">{{ selectedApplication.interview_status }}</p>
+                <p v-if="selectedApplication.interview_decline_reason" class="warning-banner">Candidate declined previous slots: {{ selectedApplication.interview_decline_reason }}</p>
+                <div v-if="selectedApplication.selected_interview_slot" class="confirmed-box"><strong>Confirmed slot</strong><p>{{ formatDateTime(selectedApplication.selected_interview_slot.start_at) }}</p></div>
+              </div>
               <button class="secondary spaced" type="button" @click="updateApplicationStatus('Rejected')">Reject</button>
             </section>
           </div>

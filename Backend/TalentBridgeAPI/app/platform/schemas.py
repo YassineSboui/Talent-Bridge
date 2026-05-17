@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 Role = Literal["candidate", "recruiter", "admin"]
 ApplicationStatus = Literal[
     "submitted", "viewed", "shortlisted", "interview", "offer", "rejected", "withdrawn", "hired",
-    "Applied", "UnderReview", "InterviewRequested", "Accepted", "Rejected",
+    "Applied", "UnderReview", "InterviewRequested", "InterviewTimeProposed", "InterviewSlotsDeclined", "Accepted", "Rejected",
 ]
 JobStatus = Literal["draft", "published", "closed"]
 AiJobStatus = Literal["queued", "running", "succeeded", "failed", "retrying"]
@@ -100,6 +100,19 @@ class ApplicationCreateRequest(BaseModel):
 class ApplicationStatusUpdateRequest(BaseModel):
     status: ApplicationStatus
     note: str | None = None
+
+
+class InterviewSlotProposalRequest(BaseModel):
+    slots: list[str] = Field(min_length=1)
+    note: str | None = None
+
+
+class InterviewSlotSelectionRequest(BaseModel):
+    slot_id: str
+
+
+class InterviewSlotDeclineRequest(BaseModel):
+    reason: str | None = None
 
 
 class NotificationCreate(BaseModel):

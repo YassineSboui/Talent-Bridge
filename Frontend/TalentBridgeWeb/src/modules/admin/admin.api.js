@@ -7,6 +7,7 @@ export const adminApi = {
   users: () => request('/v1/admin/users'),
   companies: () => request('/v1/admin/companies'),
   jobs: () => request('/v1/admin/jobs'),
+  powerbi: () => request('/v1/admin/powerbi'),
   retryAiJob: (id) => request(`/v1/admin/ai-jobs/${id}/retry`, { method: 'POST' }),
   resetDemoData: () => request('/v1/admin/reset-demo-data', { method: 'POST' }),
 }

@@ -1,12 +1,35 @@
 from __future__ import annotations
 
+import os
+from pathlib import Path
+
 from fastapi import APIRouter, Depends, HTTPException
 
-from ..security import require_role
+from ..security import current_user, require_role
 from ..store import reset_platform_demo_data, save_platform_store, store
 
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
+POWERBI_LINKS = {
+    "candidate": {
+        "title": "Candidate KPI Dashboard",
+        "description": "Open the candidate-focused Power BI page for applications, profile readiness, and job discovery KPIs.",
+        "env": "TALENTBRIDGE_POWERBI_CANDIDATE_URL",
+        "default_url": "https://app.powerbi.com/groups/me/reports/0351ac02-aea2-4c57-894f-c14fa0354b39/d8f3f6653079105c119d?experience=power-bi",
+    },
+    "recruiter": {
+        "title": "Recruiter KPI Dashboard",
+        "description": "Open the recruiter-focused Power BI pages for pipeline, candidates, applications, and jobs KPIs.",
+        "env": "TALENTBRIDGE_POWERBI_RECRUITER_URL",
+        "default_url": "https://app.powerbi.com/groups/me/reports/d66d0ba4-cfae-43bf-93da-6489edb90d02/45df99d988b8ceb032d0?experience=power-bi",
+    },
+    "admin": {
+        "title": "Admin Full Power BI Dashboard",
+        "description": "Open the full project Power BI dashboard for all created KPI pages.",
+        "env": "TALENTBRIDGE_POWERBI_ADMIN_URL",
+        "default_url": "https://app.powerbi.com/groups/me/reports/fc95c447-eec9-4c8d-99e8-342258812471/e5c3ab2586a5346ec12a?experience=power-bi",
+    },
+}
 
 
 @router.get("/dashboard")
@@ -27,6 +50,30 @@ def admin_dashboard(user: dict = Depends(require_role("admin"))):
         "failed_ai_jobs": len(failed_ai),
         "average_processing_ms": round(sum(job.get("duration_ms", 0) for job in succeeded_ai) / max(len(succeeded_ai), 1), 2),
         "recent_activity": list(store.audit_logs.values())[-8:],
+    }
+
+
+@router.get("/powerbi")
+def admin_powerbi(user: dict = Depends(current_user)):
+    report_path = Path(__file__).resolve().parents[5] / "BI" / "PowerBI" / "Mission D'entreprise.pbix"
+    role = user.get("role", "candidate")
+    allowed_roles = ["admin"] if role == "admin" else [role]
+    links = []
+    for allowed_role in allowed_roles:
+        config = POWERBI_LINKS[allowed_role]
+        links.append({
+            "role": allowed_role,
+            "title": config["title"],
+            "description": config["description"],
+            "url": os.getenv(config["env"]) or config["default_url"],
+        })
+    return {
+        "title": "Mission D'entreprise Power BI Dashboard",
+        "report_name": "Mission D'entreprise.pbix",
+        "report_path": str(report_path),
+        "report_exists": report_path.exists(),
+        "links": links,
+        "message": "Only external buttons to role-specific Power BI reports are exposed. No embedded iframe, Azure service principal, or generated KPI dashboard is used.",
     }
 
 
