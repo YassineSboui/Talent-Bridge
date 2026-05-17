@@ -51,8 +51,11 @@ def serve():
     repo_root = find_repo_root()
     model_path = repo_root / "Artifacts" / "models" / "nlp" / "model-best"
     if not model_path.exists():
-        print(f"ERROR: No trained model at {model_path}. Run the full pipeline first.")
-        sys.exit(1)
+        print(
+            f"WARNING: No trained NER model at {model_path}. "
+            "CV extraction will run without the spaCy NER model, but platform "
+            "routes such as login, jobs, and applications can still run."
+        )
 
     print(f"\n{'='*60}")
     print("  Starting CV NER API server")

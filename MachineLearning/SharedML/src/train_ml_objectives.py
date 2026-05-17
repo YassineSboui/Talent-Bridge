@@ -407,8 +407,6 @@ def train_job_segmentation(df: pd.DataFrame, models_dir: Path, reports_dir: Path
     reduced = StandardScaler().fit_transform(reduced)
 
     candidates = []
-    silhouette_sample = min(7000, len(data))
-    sample_indices = np.random.default_rng(random_state).choice(len(data), silhouette_sample, replace=False)
     for k_value in range(4, 11):
         model = MiniBatchKMeans(
             n_clusters=k_value,
@@ -417,10 +415,10 @@ def train_job_segmentation(df: pd.DataFrame, models_dir: Path, reports_dir: Path
             n_init=12,
         )
         labels = model.fit_predict(reduced)
-        sil = silhouette_score(reduced[sample_indices], labels[sample_indices])
+        sil = silhouette_score(reduced, labels)
         candidates.append((k_value, model, float(sil)))
 
-    hdbscan_result = try_hdbscan(reduced, data, sample_indices, random_state)
+    hdbscan_result = try_hdbscan(reduced, data, random_state)
 
     best_k, best_kmeans, best_silhouette = max(candidates, key=lambda item: item[2])
     labels = best_kmeans.predict(reduced)
@@ -471,7 +469,7 @@ def train_job_segmentation(df: pd.DataFrame, models_dir: Path, reports_dir: Path
     }
 
 
-def try_hdbscan(reduced: np.ndarray, data: pd.DataFrame, sample_indices: np.ndarray, random_state: int) -> dict[str, Any] | None:
+def try_hdbscan(reduced: np.ndarray, data: pd.DataFrame, random_state: int) -> dict[str, Any] | None:
     try:
         import hdbscan
     except Exception:
@@ -483,10 +481,10 @@ def try_hdbscan(reduced: np.ndarray, data: pd.DataFrame, sample_indices: np.ndar
     cluster_count = len(set(labels[non_noise]))
     if cluster_count < 2:
         return None
-    valid_sample = sample_indices[labels[sample_indices] != -1]
-    if len(valid_sample) < 200 or len(set(labels[valid_sample])) < 2:
+    valid_mask = labels != -1
+    if np.sum(valid_mask) < 200 or len(set(labels[valid_mask])) < 2:
         return None
-    score = silhouette_score(reduced[valid_sample], labels[valid_sample])
+    score = silhouette_score(reduced[valid_mask], labels[valid_mask])
     return {
         "model": model,
         "labels": labels,

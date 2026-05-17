@@ -3,7 +3,11 @@ param(
     [switch]$SkipDashboard,
     [switch]$SkipBrowser,
     [switch]$NoInstall,
-    [switch]$RunChecks
+    [switch]$RunChecks,
+    [string]$SqlServer = "localhost",
+    [string]$SqlDatabase = "DW_DataJobs",
+    [string]$SqlUser,
+    [string]$SqlPassword
 )
 
 $ErrorActionPreference = "Stop"
@@ -31,6 +35,60 @@ function Test-Command($Name) {
     return [bool](Get-Command $Name -ErrorAction SilentlyContinue)
 }
 
+function Test-PythonModule($Name) {
+    $Script = "import importlib.util, sys; sys.exit(0 if importlib.util.find_spec('$Name') else 1)"
+    $null = & python -c $Script 2>$null
+    return $LASTEXITCODE -eq 0
+}
+
+function Get-SqlcmdAuthArgs {
+    if ([string]::IsNullOrWhiteSpace($SqlUser)) {
+        return @("-E")
+    }
+
+    if ([string]::IsNullOrWhiteSpace($SqlPassword)) {
+        throw "SqlPassword is required when SqlUser is provided."
+    }
+
+    return @("-U", $SqlUser, "-P", $SqlPassword)
+}
+
+function Test-SqlServerConnection {
+    param(
+        [string[]]$AuthArgs
+    )
+
+    $ConnectionArgs = @("-S", $SqlServer, "-d", $SqlDatabase) + $AuthArgs + @(
+        "-l", "5",
+        "-b",
+        "-Q", "SET NOCOUNT ON; SELECT 1 AS ok;"
+    )
+
+    $Output = & sqlcmd @ConnectionArgs 2>&1
+    $SqlExitCode = $LASTEXITCODE
+    if ($SqlExitCode -eq 0) {
+        return $true
+    }
+
+    Write-Warn "Cannot connect to SQL Server '$SqlServer' database '$SqlDatabase'."
+    if ($Output) {
+        $Output | Select-Object -First 4 | ForEach-Object {
+            Write-Warn $_.ToString()
+        }
+    }
+
+    if ($SqlServer -eq "localhost" -or $SqlServer -eq ".") {
+        $LocalService = Get-Service -Name MSSQLSERVER -ErrorAction SilentlyContinue
+        if ($LocalService -and $LocalService.Status -ne "Running") {
+            Write-Warn "Local SQL Server service MSSQLSERVER is $($LocalService.Status). Start it from an elevated PowerShell: Start-Service MSSQLSERVER"
+        }
+    }
+
+    Write-Warn "If you use SQL Express, rerun with: .\start_talent_bridge.ps1 -SqlServer '.\SQLEXPRESS'"
+    Write-Warn "To start the app without applying SQL scripts, rerun with: .\start_talent_bridge.ps1 -SkipSql"
+    return $false
+}
+
 Write-Host ""
 Write-Host "==========================================" -ForegroundColor DarkCyan
 Write-Host "         Talent Bridge Launcher" -ForegroundColor Cyan
@@ -53,29 +111,46 @@ if (-not (Test-Command npm)) {
     throw "npm was not found in PATH. Install Node.js first."
 }
 
+$SqlAvailable = $false
+
 if (-not $SkipSql) {
     Write-Step "Applying SQL Server views/tables"
     if (Test-Command sqlcmd) {
-        $SqlScripts = @(
-            "01_create_vw_job_matching.sql",
-            "02_create_cv_analysis_tables.sql",
-            "03_create_cv_bi_views.sql",
-            "04_create_vw_ml_jobs.sql",
-            "05_create_vw_ml_salary_training.sql",
-            "06_create_vw_ml_classification_training.sql",
-            "07_create_vw_ml_segmentation_training.sql"
-        )
+        $SqlAuthArgs = @(Get-SqlcmdAuthArgs)
+        $SqlAvailable = Test-SqlServerConnection -AuthArgs $SqlAuthArgs
 
-        foreach ($ScriptName in $SqlScripts) {
-            $ScriptPath = Join-Path $SqlDir $ScriptName
-            if (Test-Path $ScriptPath) {
-                Write-Host "Running $ScriptName"
-                sqlcmd -S localhost -d DW_DataJobs -E -i $ScriptPath | Out-Host
-            } else {
-                Write-Warn "Missing SQL script: $ScriptPath"
+        if (-not $SqlAvailable) {
+            Write-Warn "SQL preparation skipped because SQL Server is not reachable."
+        } else {
+            $SqlScripts = @(
+                "01_create_vw_job_matching.sql",
+                "02_create_cv_analysis_tables.sql",
+                "03_create_cv_bi_views.sql",
+                "04_create_vw_ml_jobs.sql",
+                "05_create_vw_ml_salary_training.sql",
+                "06_create_vw_ml_classification_training.sql",
+                "07_create_vw_ml_segmentation_training.sql"
+            )
+
+            foreach ($ScriptName in $SqlScripts) {
+                $ScriptPath = Join-Path $SqlDir $ScriptName
+                if (Test-Path $ScriptPath) {
+                    Write-Host "Running $ScriptName"
+                    $SqlScriptArgs = @("-S", $SqlServer, "-d", $SqlDatabase) + $SqlAuthArgs + @("-b", "-i", $ScriptPath)
+                    $Output = & sqlcmd @SqlScriptArgs 2>&1
+                    $SqlExitCode = $LASTEXITCODE
+                    if ($Output) {
+                        $Output | Out-Host
+                    }
+                    if ($SqlExitCode -ne 0) {
+                        throw "SQL script failed: $ScriptName"
+                    }
+                } else {
+                    Write-Warn "Missing SQL script: $ScriptPath"
+                }
             }
+            Write-Ok "SQL preparation finished"
         }
-        Write-Ok "SQL preparation finished"
     } else {
         Write-Warn "sqlcmd not found. Skipping SQL preparation. Run SQL scripts manually if needed."
     }
@@ -93,14 +168,41 @@ if ($RunChecks) {
     python "Tests\smoke\test_platform_workflows.py"
     if (-not $?) { throw "Platform workflow smoke test failed" }
     if (-not $SkipSql) {
-        python "Tests\integration\test_sql_ml_views.py"
-        if (-not $?) { throw "SQL view integration check failed" }
+        if (-not $SqlAvailable) {
+            Write-Warn "SQL view integration check skipped because SQL Server is not reachable."
+        } else {
+            python "Tests\integration\test_sql_ml_views.py"
+            if (-not $?) { throw "SQL view integration check failed" }
+        }
     }
     Pop-Location
     Write-Ok "Verification checks passed"
 }
 
 if (-not $NoInstall) {
+    Write-Step "Checking backend dependencies"
+    $BackendDependencies = @(
+        @{ Module = "fastapi"; Package = "fastapi>=0.100.0" },
+        @{ Module = "uvicorn"; Package = "uvicorn[standard]>=0.23.0" },
+        @{ Module = "multipart"; Package = "python-multipart>=0.0.6" },
+        @{ Module = "fitz"; Package = "pymupdf>=1.23.0" },
+        @{ Module = "deep_translator"; Package = "deep-translator>=1.11.0" },
+        @{ Module = "langdetect"; Package = "langdetect>=1.0.9" }
+    )
+    $MissingBackendPackages = @()
+    foreach ($Dependency in $BackendDependencies) {
+        if (-not (Test-PythonModule $Dependency.Module)) {
+            $MissingBackendPackages += $Dependency.Package
+        }
+    }
+    if ($MissingBackendPackages.Count -gt 0) {
+        Write-Host "Missing backend packages. Running pip install..."
+        & python -m pip install @MissingBackendPackages
+        if (-not $?) { throw "Backend dependency install failed" }
+    } else {
+        Write-Ok "Backend dependencies already installed"
+    }
+
     Write-Step "Checking frontend dependencies"
     $NodeModules = Join-Path $FrontendDir "node_modules"
     if (-not (Test-Path $NodeModules)) {

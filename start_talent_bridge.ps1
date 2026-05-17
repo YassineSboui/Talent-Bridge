@@ -3,7 +3,11 @@ param(
     [switch]$SkipDashboard,
     [switch]$SkipBrowser,
     [switch]$NoInstall,
-    [switch]$RunChecks
+    [switch]$RunChecks,
+    [string]$SqlServer = "localhost",
+    [string]$SqlDatabase = "DW_DataJobs",
+    [string]$SqlUser,
+    [string]$SqlPassword
 )
 
 $ErrorActionPreference = "Stop"
