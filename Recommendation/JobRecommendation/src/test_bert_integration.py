@@ -9,7 +9,14 @@ Usage:
 from __future__ import annotations
 
 import sys
-from semantic_similarity import semantic_similarity_scores, _load_sentence_transformer
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[3]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from Recommendation.JobRecommendation.src.semantic_similarity import semantic_similarity_scores, _load_sentence_transformer
 
 
 def test_model_loading():
@@ -19,13 +26,13 @@ def test_model_loading():
     
     model = _load_sentence_transformer()
     if model is None:
-        print("⚠️  BERT model failed to load")
+        print("WARNING: BERT model failed to load")
         print("   System will fall back to TF-IDF")
         print("   Install: pip install sentence-transformers")
         return False
     
-    print(f"✓ Model loaded: {type(model).__name__}")
-    print(f"✓ Model type: {model.get_sentence_embedding_dimension()}-dimensional embeddings")
+    print(f"PASS: Model loaded: {type(model).__name__}")
+    print(f"PASS: Model type: {model.get_sentence_embedding_dimension()}-dimensional embeddings")
     return True
 
 
@@ -68,21 +75,21 @@ def test_basic_scoring():
     scores = semantic_similarity_scores(candidate_text, jobs)
     
     if len(scores) != 2:
-        print(f"✗ Expected 2 scores, got {len(scores)}")
+        print(f"FAIL: Expected 2 scores, got {len(scores)}")
         return False
     
     if scores[0] < scores[1]:
-        print(f"✗ ML Engineer ({scores[0]}) should score higher than Accountant ({scores[1]})")
+        print(f"FAIL: ML Engineer ({scores[0]}) should score higher than Accountant ({scores[1]})")
         return False
     
-    print(f"✓ ML Engineer score: {scores[0]:.2f}")
-    print(f"✓ Accountant score: {scores[1]:.2f}")
-    print(f"✓ Correct ranking: ML Engineer > Accountant")
+    print(f"PASS: ML Engineer score: {scores[0]:.2f}")
+    print(f"PASS: Accountant score: {scores[1]:.2f}")
+    print("PASS: Correct ranking: ML Engineer > Accountant")
     
     if 50 <= scores[0] <= 100:
-        print(f"✓ Score in valid range [0, 100]")
+        print("PASS: Score in valid range [0, 100]")
     else:
-        print(f"✗ Score out of range: {scores[0]}")
+        print(f"FAIL: Score out of range: {scores[0]}")
         return False
     
     return True
@@ -128,9 +135,9 @@ def test_score_range():
     
     for i, score in enumerate(scores):
         if not (0 <= score <= 100):
-            print(f"✗ Score {i} out of range: {score}")
+            print(f"FAIL: Score {i} out of range: {score}")
             return False
-        print(f"✓ Score {i} in valid range: {score:.2f}")
+        print(f"PASS: Score {i} in valid range: {score:.2f}")
     
     return True
 
@@ -143,9 +150,9 @@ def test_empty_inputs():
     # Empty jobs list
     scores = semantic_similarity_scores("test candidate", [])
     if len(scores) != 0:
-        print(f"✗ Empty jobs should return empty scores, got {len(scores)}")
+        print(f"FAIL: Empty jobs should return empty scores, got {len(scores)}")
         return False
-    print("✓ Empty jobs handled correctly")
+    print("PASS: Empty jobs handled correctly")
     
     # Empty candidate text
     scores = semantic_similarity_scores("", [{"job_title": "Test", "category_name": "Test", 
@@ -155,9 +162,9 @@ def test_empty_inputs():
                                               "schedule_types_csv": "Full-time", 
                                               "no_degree_mention": False, "has_salary_info": False}])
     if not all(s == 0.0 for s in scores):
-        print(f"✗ Empty candidate should return zeros, got {scores}")
+        print(f"FAIL: Empty candidate should return zeros, got {scores}")
         return False
-    print("✓ Empty candidate handled correctly")
+    print("PASS: Empty candidate handled correctly")
     
     return True
 
@@ -181,7 +188,7 @@ def run_all_tests():
             result = test_func()
             results.append((test_name, result))
         except Exception as e:
-            print(f"\n✗ Test failed with exception: {e}")
+            print(f"\nFAIL: Test failed with exception: {e}")
             import traceback
             traceback.print_exc()
             results.append((test_name, False))
@@ -194,16 +201,16 @@ def run_all_tests():
     total = len(results)
     
     for test_name, result in results:
-        status = "✓ PASS" if result else "✗ FAIL"
+        status = "PASS" if result else "FAIL"
         print(f"{status}: {test_name}")
     
     print(f"\nTotal: {passed}/{total} tests passed")
     
     if passed == total:
-        print("\n✅ All tests passed! BERT semantic matching is working correctly.")
+        print("\nAll tests passed. BERT semantic matching is working correctly.")
         return 0
     else:
-        print(f"\n❌ {total - passed} test(s) failed. Please check the errors above.")
+        print(f"\n{total - passed} test(s) failed. Please check the errors above.")
         return 1
 
 

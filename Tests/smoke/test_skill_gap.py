@@ -61,7 +61,7 @@ def test_core_skill_classified_as_critical():
     if not core_skills:
         return  # skip if empty
 
-    missing_core_skill = core_skills[0]
+    missing_core_skill = next(iter(core_skills))
     result = analyze_gap(
         candidate_skills=["photoshop"],          # unrelated skill
         job_skills=[missing_core_skill, "excel"],

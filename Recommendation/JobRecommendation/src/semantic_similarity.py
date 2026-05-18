@@ -126,8 +126,8 @@ def _load_sentence_transformer():
     
     try:
         from sentence_transformers import SentenceTransformer
-    except ImportError:
-        print("Warning: sentence-transformers not installed. Install with: pip install sentence-transformers")
+    except ImportError as exc:
+        print(f"Warning: sentence-transformers unavailable ({exc}). Install compatible dependencies from requirements.txt")
         return None
     
     model_name = os.getenv("TALENTBRIDGE_SENTENCE_MODEL", "sentence-transformers/all-MiniLM-L6-v2")

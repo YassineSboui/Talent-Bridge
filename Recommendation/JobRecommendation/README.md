@@ -8,7 +8,8 @@ It combines:
 
 ```text
 skills score
-NLP semantic similarity
+BERT/SentenceTransformer semantic similarity
+TF-IDF fallback similarity
 role score
 experience score
 education score
@@ -35,11 +36,13 @@ Recommendation/JobRecommendation/src/ranking_service.py
 
 1. Candidate profile is built from CV extraction or platform profile.
 2. Job rows are converted into matching-ready objects.
-3. Semantic NLP similarity is computed.
+3. Semantic NLP similarity is computed with `sentence-transformers/all-MiniLM-L6-v2` by default.
 4. Structured scoring is computed.
 5. Weak matches are capped to avoid false positives.
 6. Explanation text is generated.
 7. Results are ranked by final score.
+
+If `sentence-transformers` or the configured model is unavailable, `semantic_similarity.py` falls back to TF-IDF similarity so the platform remains usable.
 
 ## Final Score
 
@@ -53,9 +56,57 @@ Recommendation/JobRecommendation/src/ranking_service.py
 5% opportunity
 ```
 
+## BERT Semantic Matching
+
+Primary implementation:
+
+```text
+Recommendation/JobRecommendation/src/semantic_similarity.py
+```
+
+Default model:
+
+```text
+sentence-transformers/all-MiniLM-L6-v2
+```
+
+Environment override:
+
+```powershell
+$env:TALENTBRIDGE_SENTENCE_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+```
+
+Dependency pin:
+
+```text
+sentence-transformers>=2.6.1,<3.0.0
+```
+
+The `2.x` pin is intentional for compatibility with the current `transformers` stack used by the backend and spaCy transformer tooling.
+
+## Skill Gap Analysis
+
+Candidate-facing skill-gap analysis is exposed by the backend at:
+
+```text
+GET /api/v1/skill-gap/jobs/{job_id}
+GET /api/v1/skill-gap/top-missing
+```
+
+Core engine:
+
+```text
+MachineLearning/SharedML/src/gap_analyzer.py
+MachineLearning/SharedML/src/skill_frequency.py
+```
+
+It returns matched skills, missing skills, priority levels, market demand score, readiness level, quick wins, core gaps, and curated learning resources.
+
 ## Validation
 
 ```bash
+python Recommendation/JobRecommendation/src/test_bert_integration.py
+python -m pytest Tests/smoke/test_skill_gap.py -v
 python Tests/smoke/test_demo_logic.py
 python Tests/smoke/test_platform_workflows.py
 ```
@@ -63,6 +114,9 @@ python Tests/smoke/test_platform_workflows.py
 ## Teacher Validation Checklist
 
 - Matching uses NLP semantic score.
+- BERT semantic matching loads when dependencies are installed.
+- TF-IDF fallback keeps matching available if the transformer is unavailable.
+- Candidate skill-gap endpoints explain missing skills and learning priorities.
 - Matching is explainable.
 - Matching uses SQL/platform jobs.
 - Weak false-positive matches are capped.

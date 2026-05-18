@@ -90,6 +90,15 @@ Run with validation checks:
 .\start_talent_bridge.ps1 -RunChecks
 ```
 
+Common launcher options:
+
+```powershell
+.\start_talent_bridge.ps1 -SkipSql
+.\start_talent_bridge.ps1 -SkipDashboard
+.\start_talent_bridge.ps1 -SkipBrowser
+.\start_talent_bridge.ps1 -NoInstall
+```
+
 Implementation launcher:
 
 ```powershell
@@ -124,6 +133,16 @@ URLs:
 Frontend: http://localhost:5173
 Backend docs: http://localhost:8000/docs
 ```
+
+Demo users:
+
+```text
+candidate@talentbridge.local / candidate123
+recruiter@talentbridge.local / recruiter123
+admin@talentbridge.local / admin123
+```
+
+If SQL Server is not reachable during startup, run with `-SkipSql` for a frontend/backend demo only, or pass `-SqlServer ".\SQLEXPRESS"` for SQL Express.
 
 ## SQL Warehouse
 
@@ -164,7 +183,8 @@ It uses:
 
 ```text
 CV entity extraction
-TF-IDF embedding similarity between CV profile and job text
+BERT/SentenceTransformer semantic similarity between CV profile and job text
+TF-IDF semantic fallback when the transformer model is unavailable
 skill score
 role score
 experience score
@@ -178,6 +198,8 @@ The final recommendation engine lives in:
 ```text
 Recommendation/JobRecommendation/src/matching.py
 ```
+
+The default transformer model is `sentence-transformers/all-MiniLM-L6-v2`. Configure another compatible model with `TALENTBRIDGE_SENTENCE_MODEL`.
 
 ## ML Objectives
 
