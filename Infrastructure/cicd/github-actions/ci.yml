@@ -1,0 +1,38 @@
+name: Talent Bridge CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r Backend/TalentBridgeAPI/requirements.txt
+      - name: Compile Python modules
+        run: python -m compileall -q Backend/TalentBridgeAPI NLP DocumentAI Recommendation MachineLearning Tests
+      - name: Run smoke tests
+        run: python Tests/smoke/test_demo_logic.py
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: Frontend/TalentBridgeWeb/package-lock.json
+      - name: Install and build frontend
+        working-directory: Frontend/TalentBridgeWeb
+        run: |
+          npm ci
+          npm run build

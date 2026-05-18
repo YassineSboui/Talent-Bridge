@@ -1,0 +1,21 @@
+{
+  "model_name": "cv_quality_mlp",
+  "task": "cv_quality_score_regression_and_grade_classification",
+  "input_size": 2519,
+  "text_features": 2500,
+  "numeric_features": 19,
+  "dropout": 0.25,
+  "training_records": 14930,
+  "train_samples": 10451,
+  "validation_samples": 2239,
+  "test_samples": 2240,
+  "label_source": "rubric_pseudo_labels_plus_synthetic_variants",
+  "grades": [
+    "Excellent",
+    "Good",
+    "Average",
+    "Weak",
+    "Poor"
+  ],
+  "device": "cpu"
+}

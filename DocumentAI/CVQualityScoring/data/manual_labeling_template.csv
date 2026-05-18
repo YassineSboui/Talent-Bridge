@@ -1,0 +1,3 @@
+file_path,label,reviewer,review_date,notes
+Data/samples/cv/Test CV/example.pdf,Pro,,,Complete CV with clear contact, sections, skills, education, and experience/projects.
+Data/samples/cv/Test CV/example_bad.pdf,Non Pro,,,Missing core sections or contact information.

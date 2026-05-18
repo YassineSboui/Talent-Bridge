@@ -1,0 +1,251 @@
+file_path,category,synthetic,target_score,predicted_score,target_grade,predicted_grade
+synthetic://quality_grade/weak/204,synthetic_quality_calibration,True,52.0,45.1,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HR\cv_02351.pdf,HR,False,54.0,53.57,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HEALTHCARE\cv_01109.pdf::noisy_repeated,HEALTHCARE,True,54.0,55.78,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSULTANT\cv_02441.pdf,CONSULTANT,False,54.0,58.74,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HR\cv_01509.pdf::average_excerpt,HR,True,50.0,47.65,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CHEF\cv_01747.pdf::poor_short,CHEF,True,28.0,27.8,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\SALES\cv_00854.pdf::average_excerpt,SALES,True,53.0,52.45,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ACCOUNTANT\cv_01036.pdf::weak_missing_contact,ACCOUNTANT,True,39.0,39.98,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DIGITAL-MEDIA\cv_00412.pdf::noisy_repeated,DIGITAL-MEDIA,True,48.0,47.63,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\SALES\cv_01094.pdf::noisy_repeated,SALES,True,48.0,48.29,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BUSINESS-DEVELOPMENT\cv_02232.pdf::noisy_repeated,BUSINESS-DEVELOPMENT,True,48.0,48.31,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BANKING\cv_00704.pdf::noisy_repeated,BANKING,True,54.0,56.49,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\FINANCE\cv_01840.pdf::average_excerpt,FINANCE,True,50.0,48.64,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AVIATION\cv_02321.pdf,AVIATION,False,83.0,90.07,Good,Excellent
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ACCOUNTANT\cv_01099.pdf::average_excerpt,ACCOUNTANT,True,54.0,50.76,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BUSINESS-DEVELOPMENT\cv_00455.pdf::poor_short,BUSINESS-DEVELOPMENT,True,28.0,28.97,Poor,Poor
+synthetic://quality_grade/excellent/240,synthetic_quality_calibration,True,95.0,99.78,Excellent,Excellent
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AVIATION\cv_02208.pdf::weak_missing_contact,AVIATION,True,54.0,51.99,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ACCOUNTANT\cv_00329.pdf::noisy_repeated,ACCOUNTANT,True,43.0,42.23,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CHEF\cv_01913.pdf::poor_short,CHEF,True,28.0,27.92,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\TEACHER\cv_02122.pdf::noisy_repeated,TEACHER,True,28.0,28.34,Poor,Poor
+synthetic://quality_grade/poor/449,synthetic_quality_calibration,True,20.0,20.15,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\PUBLIC-RELATIONS\cv_02286.pdf::average_excerpt,PUBLIC-RELATIONS,True,50.0,46.18,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ARTS\cv_01400.pdf::average_excerpt,ARTS,True,50.0,49.03,Weak,Weak
+synthetic://quality_grade/excellent/373,synthetic_quality_calibration,True,97.0,99.66,Excellent,Excellent
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BUSINESS-DEVELOPMENT\cv_00325.pdf,BUSINESS-DEVELOPMENT,False,54.0,60.32,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ARTS\cv_02370.pdf::noisy_repeated,ARTS,True,54.0,55.89,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DESIGNER\cv_01792.pdf::average_excerpt,DESIGNER,True,54.0,55.03,Weak,Average
+synthetic://quality_grade/poor/128,synthetic_quality_calibration,True,13.0,20.15,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\PUBLIC-RELATIONS\cv_00868.pdf::noisy_repeated,PUBLIC-RELATIONS,True,51.0,50.6,Weak,Weak
+synthetic://quality_grade/poor/484,synthetic_quality_calibration,True,32.0,20.15,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CHEF\cv_02143.pdf,CHEF,False,54.0,58.86,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HEALTHCARE\cv_00519.pdf::weak_missing_contact,HEALTHCARE,True,52.0,48.25,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BPO\cv_00079.pdf::weak_missing_contact,BPO,True,35.0,36.63,Weak,Weak
+synthetic://quality_grade/average/35,synthetic_quality_calibration,True,63.0,68.83,Average,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BANKING\cv_01878.pdf::weak_missing_contact,BANKING,True,51.0,47.84,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ARTS\cv_02420.pdf::average_excerpt,ARTS,True,54.0,60.47,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AGRICULTURE\cv_02228.pdf::weak_missing_contact,AGRICULTURE,True,54.0,54.28,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\FINANCE\cv_00101.pdf,FINANCE,False,54.0,53.15,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ADVOCATE\cv_00681.pdf::average_excerpt,ADVOCATE,True,50.0,46.25,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\INFORMATION-TECHNOLOGY\cv_00523.pdf,INFORMATION-TECHNOLOGY,False,54.0,56.98,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AGRICULTURE\cv_01005.pdf::noisy_repeated,AGRICULTURE,True,51.0,51.47,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ENGINEERING\cv_00160.pdf,ENGINEERING,False,54.0,58.25,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ADVOCATE\cv_00895.pdf::weak_missing_contact,ADVOCATE,True,52.0,51.68,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AGRICULTURE\cv_02371.pdf::weak_missing_contact,AGRICULTURE,True,54.0,52.56,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BANKING\cv_00853.pdf::noisy_repeated,BANKING,True,54.0,53.47,Weak,Weak
+synthetic://quality_grade/good/88,synthetic_quality_calibration,True,88.0,84.37,Good,Good
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ARTS\cv_00122.pdf,ARTS,False,54.0,55.68,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HEALTHCARE\cv_00514.pdf::weak_missing_contact,HEALTHCARE,True,51.0,46.56,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CHEF\cv_00764.pdf::poor_short,CHEF,True,28.0,28.81,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\PUBLIC-RELATIONS\cv_00880.pdf::poor_short,PUBLIC-RELATIONS,True,43.0,40.89,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DIGITAL-MEDIA\cv_01774.pdf,DIGITAL-MEDIA,False,54.0,53.09,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BPO\cv_00623.pdf::average_excerpt,BPO,True,50.0,48.58,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BPO\cv_02186.pdf::average_excerpt,BPO,True,35.0,34.6,Weak,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AUTOMOBILE\cv_01179.pdf::average_excerpt,AUTOMOBILE,True,50.0,51.33,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AVIATION\cv_01351.pdf::poor_short,AVIATION,True,45.0,45.28,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\FITNESS\cv_00062.pdf::weak_missing_contact,FITNESS,True,52.0,47.24,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\SALES\cv_00083.pdf,SALES,False,58.0,71.57,Average,Average
+synthetic://quality_grade/poor/444,synthetic_quality_calibration,True,15.0,20.15,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSULTANT\cv_00024.pdf::noisy_repeated,CONSULTANT,True,33.0,31.81,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HR\cv_00615.pdf::average_excerpt,HR,True,53.0,52.78,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\INFORMATION-TECHNOLOGY\cv_02102.pdf,INFORMATION-TECHNOLOGY,False,54.0,61.53,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AGRICULTURE\cv_01754.pdf::poor_short,AGRICULTURE,True,45.0,44.38,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ENGINEERING\cv_00650.pdf::noisy_repeated,ENGINEERING,True,43.0,43.56,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DIGITAL-MEDIA\cv_00281.pdf::average_excerpt,DIGITAL-MEDIA,True,71.0,72.48,Average,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AGRICULTURE\cv_01619.pdf,AGRICULTURE,False,54.0,62.14,Weak,Average
+synthetic://quality_grade/good/320,synthetic_quality_calibration,True,81.0,85.81,Good,Good
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HR\cv_02451.pdf::noisy_repeated,HR,True,28.0,28.34,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CHEF\cv_01198.pdf::poor_short,CHEF,True,13.0,13.8,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AGRICULTURE\cv_01500.pdf::weak_missing_contact,AGRICULTURE,True,54.0,50.52,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DIGITAL-MEDIA\cv_02474.pdf::noisy_repeated,DIGITAL-MEDIA,True,48.0,48.63,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DESIGNER\cv_01358.pdf::poor_short,DESIGNER,True,28.0,28.26,Poor,Poor
+synthetic://quality_grade/excellent/212,synthetic_quality_calibration,True,95.0,98.97,Excellent,Excellent
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\INFORMATION-TECHNOLOGY\cv_01578.pdf::weak_missing_contact,INFORMATION-TECHNOLOGY,True,40.0,37.4,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSTRUCTION\cv_01180.pdf,CONSTRUCTION,False,79.0,77.87,Good,Good
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AUTOMOBILE\cv_00113.pdf::poor_short,AUTOMOBILE,True,13.0,13.61,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\PUBLIC-RELATIONS\cv_01292.pdf::average_excerpt,PUBLIC-RELATIONS,True,53.0,51.86,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AGRICULTURE\cv_00028.pdf::weak_missing_contact,AGRICULTURE,True,54.0,51.92,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AUTOMOBILE\cv_01097.pdf::average_excerpt,AUTOMOBILE,True,50.0,50.11,Weak,Weak
+synthetic://quality_grade/good/358,synthetic_quality_calibration,True,76.0,83.85,Good,Good
+synthetic://quality_grade/excellent/222,synthetic_quality_calibration,True,96.0,99.02,Excellent,Excellent
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HR\cv_01829.pdf::average_excerpt,HR,True,50.0,46.4,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AVIATION\cv_01251.pdf::noisy_repeated,AVIATION,True,28.0,27.9,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSTRUCTION\cv_01813.pdf::average_excerpt,CONSTRUCTION,True,53.0,53.09,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\SALES\cv_00906.pdf::weak_missing_contact,SALES,True,51.0,51.69,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\INFORMATION-TECHNOLOGY\cv_00446.pdf::weak_missing_contact,INFORMATION-TECHNOLOGY,True,44.0,43.63,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BANKING\cv_02074.pdf::weak_missing_contact,BANKING,True,44.0,45.13,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HEALTHCARE\cv_00520.pdf::poor_short,HEALTHCARE,True,28.0,27.58,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DIGITAL-MEDIA\cv_01640.pdf,DIGITAL-MEDIA,False,54.0,55.29,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HEALTHCARE\cv_00627.pdf::weak_missing_contact,HEALTHCARE,True,51.0,49.26,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BPO\cv_02262.pdf,BPO,False,54.0,61.78,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\FINANCE\cv_00506.pdf,FINANCE,False,54.0,49.4,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DIGITAL-MEDIA\cv_00749.pdf,DIGITAL-MEDIA,False,54.0,54.53,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HEALTHCARE\cv_02195.pdf::noisy_repeated,HEALTHCARE,True,43.0,43.98,Weak,Weak
+synthetic://quality_grade/weak/264,synthetic_quality_calibration,True,38.0,45.1,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CHEF\cv_02085.pdf::noisy_repeated,CHEF,True,48.0,47.03,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ARTS\cv_00424.pdf::poor_short,ARTS,True,28.0,27.73,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AUTOMOBILE\cv_00524.pdf,AUTOMOBILE,False,58.0,66.15,Average,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AGRICULTURE\cv_02187.pdf::weak_missing_contact,AGRICULTURE,True,51.0,43.22,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ACCOUNTANT\cv_01612.pdf::noisy_repeated,ACCOUNTANT,True,51.0,49.45,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSTRUCTION\cv_00856.pdf::poor_short,CONSTRUCTION,True,36.0,33.14,Weak,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\APPAREL\cv_01706.pdf::average_excerpt,APPAREL,True,53.0,51.67,Weak,Weak
+synthetic://quality_grade/average/464,synthetic_quality_calibration,True,60.0,71.03,Average,Average
+synthetic://quality_grade/average/147,synthetic_quality_calibration,True,70.0,67.82,Average,Average
+synthetic://quality_grade/excellent/258,synthetic_quality_calibration,True,98.0,98.15,Excellent,Excellent
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ENGINEERING\cv_01414.pdf::average_excerpt,ENGINEERING,True,50.0,48.6,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HR\cv_00822.pdf::noisy_repeated,HR,True,28.0,26.31,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\PUBLIC-RELATIONS\cv_01620.pdf::average_excerpt,PUBLIC-RELATIONS,True,50.0,49.29,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DESIGNER\cv_02386.pdf::weak_missing_contact,DESIGNER,True,54.0,55.43,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HR\cv_00825.pdf::weak_missing_contact,HR,True,54.0,53.67,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\FITNESS\cv_02271.pdf::poor_short,FITNESS,True,28.0,28.87,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\SALES\cv_01516.pdf::poor_short,SALES,True,28.0,28.72,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DIGITAL-MEDIA\cv_02265.pdf::average_excerpt,DIGITAL-MEDIA,True,50.0,48.35,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSTRUCTION\cv_02105.pdf::noisy_repeated,CONSTRUCTION,True,46.0,44.75,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AUTOMOBILE\cv_02278.pdf::poor_short,AUTOMOBILE,True,45.0,47.78,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HR\cv_00366.pdf::poor_short,HR,True,28.0,29.24,Poor,Poor
+synthetic://quality_grade/good/477,synthetic_quality_calibration,True,81.0,84.7,Good,Good
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\TEACHER\cv_02142.pdf::poor_short,TEACHER,True,43.0,40.16,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\FINANCE\cv_00506.pdf::average_excerpt,FINANCE,True,53.0,51.03,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ADVOCATE\cv_00051.pdf::poor_short,ADVOCATE,True,45.0,47.3,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HR\cv_02414.pdf::noisy_repeated,HR,True,54.0,54.22,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSULTANT\cv_01461.pdf::average_excerpt,CONSULTANT,True,53.0,49.99,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\FITNESS\cv_01126.pdf::average_excerpt,FITNESS,True,42.0,38.05,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\INFORMATION-TECHNOLOGY\cv_00355.pdf::weak_missing_contact,INFORMATION-TECHNOLOGY,True,54.0,51.12,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ACCOUNTANT\cv_02423.pdf::average_excerpt,ACCOUNTANT,True,50.0,48.21,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSTRUCTION\cv_00134.pdf,CONSTRUCTION,False,54.0,58.78,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DESIGNER\cv_02048.pdf,DESIGNER,False,54.0,57.24,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DIGITAL-MEDIA\cv_00757.pdf::noisy_repeated,DIGITAL-MEDIA,True,43.0,42.83,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ARTS\cv_00365.pdf::noisy_repeated,ARTS,True,33.0,33.09,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AUTOMOBILE\cv_01279.pdf::weak_missing_contact,AUTOMOBILE,True,54.0,51.79,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\SALES\cv_00222.pdf::average_excerpt,SALES,True,50.0,50.25,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BUSINESS-DEVELOPMENT\cv_01694.pdf::poor_short,BUSINESS-DEVELOPMENT,True,28.0,28.41,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\APPAREL\cv_02307.pdf::poor_short,APPAREL,True,28.0,27.14,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\FINANCE\cv_02396.pdf::average_excerpt,FINANCE,True,44.0,43.48,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSULTANT\cv_00763.pdf::weak_missing_contact,CONSULTANT,True,51.0,46.38,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HR\cv_01551.pdf::noisy_repeated,HR,True,46.0,44.3,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\TEACHER\cv_02202.pdf::poor_short,TEACHER,True,18.0,17.32,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\FITNESS\cv_02305.pdf::noisy_repeated,FITNESS,True,28.0,26.44,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\PUBLIC-RELATIONS\cv_02245.pdf::noisy_repeated,PUBLIC-RELATIONS,True,28.0,26.74,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DESIGNER\cv_02144.pdf::average_excerpt,DESIGNER,True,54.0,56.66,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AGRICULTURE\cv_02371.pdf::average_excerpt,AGRICULTURE,True,54.0,52.22,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DIGITAL-MEDIA\cv_02005.pdf::average_excerpt,DIGITAL-MEDIA,True,50.0,49.81,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ENGINEERING\cv_02361.pdf::average_excerpt,ENGINEERING,True,54.0,47.94,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSULTANT\cv_01635.pdf::noisy_repeated,CONSULTANT,True,36.0,34.79,Weak,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CHEF\cv_00823.pdf::poor_short,CHEF,True,33.0,33.28,Poor,Poor
+synthetic://quality_grade/poor/263,synthetic_quality_calibration,True,30.0,20.15,Poor,Poor
+synthetic://quality_grade/weak/431,synthetic_quality_calibration,True,37.0,44.11,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSTRUCTION\cv_02138.pdf,CONSTRUCTION,False,54.0,54.27,Weak,Weak
+synthetic://quality_grade/good/495,synthetic_quality_calibration,True,77.0,85.74,Good,Good
+synthetic://quality_grade/good/38,synthetic_quality_calibration,True,79.0,85.29,Good,Good
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\FINANCE\cv_02280.pdf,FINANCE,False,58.0,60.57,Average,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\TEACHER\cv_01667.pdf,TEACHER,False,54.0,51.85,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\SALES\cv_00999.pdf,SALES,False,54.0,57.5,Weak,Average
+synthetic://quality_grade/good/154,synthetic_quality_calibration,True,87.0,85.88,Good,Good
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\INFORMATION-TECHNOLOGY\cv_01589.pdf::noisy_repeated,INFORMATION-TECHNOLOGY,True,46.0,44.24,Weak,Weak
+synthetic://quality_grade/poor/394,synthetic_quality_calibration,True,16.0,20.15,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DIGITAL-MEDIA\cv_00567.pdf,DIGITAL-MEDIA,False,54.0,60.07,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HR\cv_00936.pdf,HR,False,54.0,54.37,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSTRUCTION\cv_01638.pdf::poor_short,CONSTRUCTION,True,33.0,33.77,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\APPAREL\cv_01722.pdf::weak_missing_contact,APPAREL,True,40.0,35.85,Weak,Weak
+synthetic://quality_grade/weak/123,synthetic_quality_calibration,True,43.0,44.35,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HEALTHCARE\cv_02252.pdf,HEALTHCARE,False,87.0,79.69,Good,Good
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSULTANT\cv_01352.pdf,CONSULTANT,False,83.0,83.1,Good,Good
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\PUBLIC-RELATIONS\cv_01838.pdf,PUBLIC-RELATIONS,False,58.0,59.93,Average,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ARTS\cv_01745.pdf::noisy_repeated,ARTS,True,54.0,56.48,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AGRICULTURE\cv_00860.pdf,AGRICULTURE,False,54.0,53.3,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AVIATION\cv_01924.pdf::weak_missing_contact,AVIATION,True,51.0,48.07,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\SALES\cv_01659.pdf,SALES,False,54.0,57.94,Weak,Average
+synthetic://quality_grade/poor/95,synthetic_quality_calibration,True,19.0,20.15,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ARTS\cv_00365.pdf::weak_missing_contact,ARTS,True,54.0,52.0,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\FINANCE\cv_02123.pdf::noisy_repeated,FINANCE,True,43.0,44.27,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\INFORMATION-TECHNOLOGY\cv_00807.pdf::poor_short,INFORMATION-TECHNOLOGY,True,28.0,28.54,Poor,Poor
+synthetic://quality_grade/excellent/29,synthetic_quality_calibration,True,91.0,98.72,Excellent,Excellent
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ADVOCATE\cv_01284.pdf::noisy_repeated,ADVOCATE,True,43.0,44.14,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BUSINESS-DEVELOPMENT\cv_02117.pdf::average_excerpt,BUSINESS-DEVELOPMENT,True,35.0,35.31,Weak,Weak
+synthetic://quality_grade/excellent/73,synthetic_quality_calibration,True,96.0,100.0,Excellent,Excellent
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\FINANCE\cv_00686.pdf::poor_short,FINANCE,True,28.0,28.53,Poor,Poor
+synthetic://quality_grade/good/399,synthetic_quality_calibration,True,88.0,85.47,Good,Good
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ARTS\cv_00630.pdf,ARTS,False,54.0,54.83,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\FINANCE\cv_00456.pdf::weak_missing_contact,FINANCE,True,45.0,47.8,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BANKING\cv_00096.pdf,BANKING,False,73.0,72.69,Average,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BANKING\cv_01953.pdf::poor_short,BANKING,True,45.0,45.67,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CHEF\cv_01601.pdf::weak_missing_contact,CHEF,True,51.0,51.72,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ENGINEERING\cv_00537.pdf::average_excerpt,ENGINEERING,True,53.0,52.13,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AVIATION\cv_00310.pdf::weak_missing_contact,AVIATION,True,36.0,36.82,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AGRICULTURE\cv_00844.pdf::average_excerpt,AGRICULTURE,True,54.0,55.05,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ENGINEERING\cv_00427.pdf::average_excerpt,ENGINEERING,True,54.0,56.75,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AVIATION\cv_01887.pdf::weak_missing_contact,AVIATION,True,54.0,56.21,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BANKING\cv_01183.pdf::noisy_repeated,BANKING,True,54.0,53.58,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DESIGNER\cv_00628.pdf,DESIGNER,False,50.0,38.07,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\SALES\cv_02399.pdf::poor_short,SALES,True,13.0,12.93,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\APPAREL\cv_00331.pdf,APPAREL,False,78.0,78.7,Good,Good
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HEALTHCARE\cv_00783.pdf,HEALTHCARE,False,54.0,55.12,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DIGITAL-MEDIA\cv_00388.pdf::poor_short,DIGITAL-MEDIA,True,13.0,12.47,Poor,Poor
+synthetic://quality_grade/weak/246,synthetic_quality_calibration,True,41.0,44.02,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ENGINEERING\cv_02037.pdf,ENGINEERING,False,54.0,56.21,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ACCOUNTANT\cv_00800.pdf,ACCOUNTANT,False,54.0,57.75,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ACCOUNTANT\cv_00299.pdf::average_excerpt,ACCOUNTANT,True,50.0,46.7,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\INFORMATION-TECHNOLOGY\cv_00249.pdf,INFORMATION-TECHNOLOGY,False,54.0,57.28,Weak,Average
+synthetic://quality_grade/average/167,synthetic_quality_calibration,True,69.0,67.31,Average,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DESIGNER\cv_00919.pdf::poor_short,DESIGNER,True,28.0,27.74,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BANKING\cv_00444.pdf::weak_missing_contact,BANKING,True,36.0,31.9,Weak,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ARTS\cv_00780.pdf::average_excerpt,ARTS,True,50.0,50.5,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BANKING\cv_01004.pdf,BANKING,False,58.0,59.46,Average,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BANKING\cv_01525.pdf::weak_missing_contact,BANKING,True,43.0,40.71,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ADVOCATE\cv_02001.pdf::poor_short,ADVOCATE,True,43.0,40.54,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BANKING\cv_00642.pdf::noisy_repeated,BANKING,True,40.0,38.08,Weak,Weak
+synthetic://quality_grade/weak/12,synthetic_quality_calibration,True,37.0,44.63,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ACCOUNTANT\cv_02448.pdf::weak_missing_contact,ACCOUNTANT,True,54.0,49.18,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\PUBLIC-RELATIONS\cv_02203.pdf,PUBLIC-RELATIONS,False,88.0,72.28,Good,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSTRUCTION\cv_00286.pdf,CONSTRUCTION,False,54.0,55.76,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSULTANT\cv_01820.pdf::average_excerpt,CONSULTANT,True,53.0,50.77,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ARTS\cv_01772.pdf::weak_missing_contact,ARTS,True,54.0,52.93,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ARTS\cv_00630.pdf::poor_short,ARTS,True,28.0,26.9,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DIGITAL-MEDIA\cv_00942.pdf::average_excerpt,DIGITAL-MEDIA,True,53.0,51.61,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BUSINESS-DEVELOPMENT\cv_01769.pdf::average_excerpt,BUSINESS-DEVELOPMENT,True,56.0,54.66,Average,Weak
+synthetic://quality_grade/good/462,synthetic_quality_calibration,True,84.0,86.38,Good,Good
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ACCOUNTANT\cv_01266.pdf,ACCOUNTANT,False,54.0,55.16,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HEALTHCARE\cv_01026.pdf::average_excerpt,HEALTHCARE,True,54.0,50.89,Weak,Weak
+synthetic://quality_grade/excellent/2,synthetic_quality_calibration,True,91.0,98.74,Excellent,Excellent
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSTRUCTION\cv_00652.pdf::average_excerpt,CONSTRUCTION,True,50.0,45.76,Weak,Weak
+synthetic://quality_grade/average/328,synthetic_quality_calibration,True,60.0,67.92,Average,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AVIATION\cv_00025.pdf::weak_missing_contact,AVIATION,True,54.0,54.07,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BANKING\cv_01287.pdf,BANKING,False,54.0,52.05,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HR\cv_02443.pdf,HR,False,54.0,53.66,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HEALTHCARE\cv_00572.pdf,HEALTHCARE,False,77.0,80.44,Good,Good
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSULTANT\cv_00855.pdf,CONSULTANT,False,54.0,48.42,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ADVOCATE\cv_01007.pdf,ADVOCATE,False,58.0,52.84,Average,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ACCOUNTANT\cv_01328.pdf::noisy_repeated,ACCOUNTANT,True,48.0,47.05,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\AVIATION\cv_01924.pdf::noisy_repeated,AVIATION,True,28.0,26.21,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BANKING\cv_00223.pdf,BANKING,False,54.0,59.45,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\HR\cv_00321.pdf,HR,False,54.0,55.32,Weak,Average
+synthetic://quality_grade/poor/155,synthetic_quality_calibration,True,32.0,20.15,Poor,Poor
+synthetic://quality_grade/excellent/133,synthetic_quality_calibration,True,94.0,99.96,Excellent,Excellent
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\FINANCE\cv_01786.pdf,FINANCE,False,54.0,52.06,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\PUBLIC-RELATIONS\cv_00837.pdf::average_excerpt,PUBLIC-RELATIONS,True,41.0,39.97,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\TEACHER\cv_01090.pdf::average_excerpt,TEACHER,True,59.0,60.98,Average,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\SALES\cv_02207.pdf::average_excerpt,SALES,True,53.0,49.38,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\TEACHER\cv_00877.pdf::weak_missing_contact,TEACHER,True,54.0,51.21,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\FITNESS\cv_00471.pdf::poor_short,FITNESS,True,43.0,42.27,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\PUBLIC-RELATIONS\cv_00705.pdf,PUBLIC-RELATIONS,False,74.0,73.44,Average,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\FINANCE\cv_01654.pdf::weak_missing_contact,FINANCE,True,54.0,59.39,Weak,Average
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ACCOUNTANT\cv_00769.pdf::noisy_repeated,ACCOUNTANT,True,48.0,49.42,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\DESIGNER\cv_02155.pdf::poor_short,DESIGNER,True,13.0,13.18,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CONSTRUCTION\cv_00341.pdf::weak_missing_contact,CONSTRUCTION,True,54.0,54.39,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\BANKING\cv_00166.pdf::noisy_repeated,BANKING,True,28.0,27.69,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\APPAREL\cv_01969.pdf::noisy_repeated,APPAREL,True,33.0,33.08,Poor,Poor
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\INFORMATION-TECHNOLOGY\cv_00320.pdf::poor_short,INFORMATION-TECHNOLOGY,True,43.0,43.31,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\ENGINEERING\cv_00427.pdf::noisy_repeated,ENGINEERING,True,48.0,48.63,Weak,Weak
+C:\Users\YassineSBOUI\OneDrive - NEOLEDGE\Bureau\Mission D'entreprise\Data\document_classification\raw\cv\CHEF\cv_02372.pdf::poor_short,CHEF,True,43.0,44.62,Weak,Weak

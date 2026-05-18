@@ -17,10 +17,22 @@ __pycache__/
 .venv/
 venv/
 
+# Node / frontend build outputs
+node_modules/
+dist/
+
 # Spacy models (large binary files)
 cv_ner_project/models/model-best/
 cv_ner_project/models/model-last/
 cv_ner_project/data/processed/*.spacy
+Artifacts/models/
+Artifacts/reports/
+Artifacts/cache/
+Artifacts/platform_store.json
+
+# Local agent/tooling metadata
+.opencode/
+opencode.json
 
 # OS files
 Thumbs.db

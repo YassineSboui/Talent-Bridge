@@ -1,0 +1,104 @@
+{
+  "metadata": {
+    "model_name": "cv_document_cnn",
+    "task": "cv_vs_non_cv_document_classification",
+    "image_size": [
+      160,
+      224
+    ],
+    "dropout": 0.25,
+    "positive_label": "cv",
+    "negative_label": "non_cv",
+    "decision_threshold": 0.2,
+    "accept_threshold": 0.7,
+    "reject_threshold": 0.1,
+    "strong_text_evidence_threshold": 0.65,
+    "moderate_text_evidence_threshold": 0.45,
+    "text_evidence_probability_floor": 0.88,
+    "text_evidence_manual_review_floor": 0.55,
+    "train_samples": 3479,
+    "validation_samples": 746,
+    "test_samples": 746,
+    "device": "cpu"
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.09195,
+      "val_loss": 0.14476,
+      "val_f1": 0.9864,
+      "threshold": 0.2
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.01242,
+      "val_loss": 0.00719,
+      "val_f1": 0.9987,
+      "threshold": 0.2
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.00967,
+      "val_loss": 0.01081,
+      "val_f1": 0.9987,
+      "threshold": 0.2
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.00566,
+      "val_loss": 0.00842,
+      "val_f1": 0.9987,
+      "threshold": 0.2
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.00403,
+      "val_loss": 0.00715,
+      "val_f1": 0.9987,
+      "threshold": 0.2
+    }
+  ],
+  "test_metrics": {
+    "accuracy": 0.9973,
+    "precision_cv": 0.9947,
+    "recall_cv": 1.0,
+    "f1_cv": 0.9973,
+    "confusion_matrix": [
+      [
+        371,
+        2
+      ],
+      [
+        0,
+        373
+      ]
+    ],
+    "classification_report": {
+      "non_cv": {
+        "precision": 1.0,
+        "recall": 0.9946380697050938,
+        "f1-score": 0.9973118279569892,
+        "support": 373.0
+      },
+      "cv": {
+        "precision": 0.9946666666666667,
+        "recall": 1.0,
+        "f1-score": 0.9973262032085561,
+        "support": 373.0
+      },
+      "accuracy": 0.9973190348525469,
+      "macro avg": {
+        "precision": 0.9973333333333334,
+        "recall": 0.9973190348525469,
+        "f1-score": 0.9973190155827727,
+        "support": 746.0
+      },
+      "weighted avg": {
+        "precision": 0.9973333333333334,
+        "recall": 0.9973190348525469,
+        "f1-score": 0.9973190155827727,
+        "support": 746.0
+      }
+    }
+  }
+}
