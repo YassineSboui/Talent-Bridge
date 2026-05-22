@@ -1,10 +1,10 @@
-# Document AI CV Document Classification Mini-Project
+# CV Document Classification
 
-## What It Does
+## What This Module Does
 
-Classifies whether an uploaded document is really a CV before running extraction.
+This module classifies whether an uploaded document is really a CV before the platform runs CV extraction, CV quality scoring, matching, or application creation.
 
-Output labels:
+Internal model labels:
 
 ```text
 cv
@@ -12,26 +12,69 @@ non_cv
 uncertain
 ```
 
-## Why It Exists
-
-The extraction pipeline should not assume every uploaded PDF is a CV. This classifier protects downstream CV extraction, quality scoring, matching, and applications from invalid uploads.
-
-## Data
-
-The local training dataset is a balanced sample copied into:
+Runtime backend decisions:
 
 ```text
-Data/document_classification/
+accepted
+rejected
+manual_review
 ```
 
-Source classes:
+The main runtime function is:
+
+```python
+from DocumentAI.CVDocumentClassification.src.classifier import classify_document
+
+result = classify_document("candidate_cv.pdf")
+```
+
+## Why It Was Built
+
+Without this classifier, any uploaded file could enter the CV pipeline. That would damage every later step:
+
+- NER would try to extract skills and education from non-CV documents.
+- CV quality scoring would produce meaningless scores.
+- Job matching would use unreliable candidate profiles.
+- Applications could be created with invalid files.
+- Recruiters would receive bad or irrelevant documents.
+
+This module is therefore the first AI gate in the upload workflow.
+
+## How It Works
+
+The module uses a compact CNN over a rendered document page.
+
+Pipeline:
 
 ```text
-CV PDFs -> cv
-Non-CV TIFF documents -> non_cv
+PDF or image file
+-> render first page/frame
+-> convert to grayscale
+-> resize with padding to fixed image size
+-> normalize image to tensor
+-> CNN predicts CV probability
+-> PDF text evidence guardrail adjusts confidence
+-> backend maps result to accepted/rejected/manual_review
 ```
 
-The source CV domain labels are ignored for this binary task. They can be reused later for CV domain classification.
+The visual CNN is useful because CVs often have recognizable page-layout patterns: section blocks, contact header, experience area, education area, and skills lists.
+
+The text-evidence guardrail checks for CV-like terms and contact signals such as:
+
+```text
+experience
+education
+skills
+projects
+certifications
+languages
+linkedin
+github
+email
+phone
+```
+
+This guardrail reduces false rejection when a real CV layout differs from the visual training set.
 
 ## Main Files
 
@@ -43,26 +86,102 @@ DocumentAI/CVDocumentClassification/training/prepare_dataset.py
 DocumentAI/CVDocumentClassification/training/train_cv_document_classifier.py
 ```
 
-## How It Works
+File responsibilities:
 
-1. Render the first page of a PDF or image document.
-2. Convert it to a fixed-size grayscale page image.
-3. Train a compact CNN on balanced CV and Non-CV samples.
-4. Select a validation threshold by F1 score.
-5. Use lightweight PDF text evidence as a runtime guardrail for real CV uploads with layouts unlike the training set.
-6. Return `accepted`, `rejected`, or `manual_review` at runtime.
+| File | Responsibility |
+| --- | --- |
+| `src/preprocessing.py` | Renders PDFs/images, resizes with padding, converts arrays to tensors. |
+| `src/model.py` | Defines the compact CNN architecture. |
+| `src/classifier.py` | Loads model artifacts and performs runtime classification. |
+| `training/prepare_dataset.py` | Builds a balanced dataset and writes `manifest.csv`. |
+| `training/train_cv_document_classifier.py` | Trains, validates, thresholds, and saves the CNN. |
 
-## Prepare Data
+## Model Architecture
 
-```bash
-python DocumentAI/CVDocumentClassification/training/prepare_dataset.py --cv-samples 2484 --non-cv-samples 2484
+The model class is:
+
+```text
+CvDocumentCnn
 ```
 
-## Train
+Architecture summary:
+
+```text
+Input: 1-channel grayscale page image
+-> Conv2D + BatchNorm + ReLU + MaxPool
+-> Conv2D + BatchNorm + ReLU + MaxPool
+-> Conv2D + BatchNorm + ReLU + MaxPool
+-> Conv2D + BatchNorm + ReLU
+-> AdaptiveAvgPool2D
+-> Flatten
+-> Dropout
+-> Linear + ReLU
+-> Dropout
+-> Linear output logit
+-> sigmoid probability of CV
+```
+
+Why this architecture:
+
+- compact enough to train locally
+- strong enough to learn document layout
+- avoids a large heavy vision model for a binary task
+- works for both PDFs and images after rendering
+
+## Dataset
+
+Prepared dataset location:
+
+```text
+Data/document_classification/
+```
+
+Dataset composition used:
+
+```text
+2487 CV samples
+2484 Non-CV samples
+about 348.61 MB
+```
+
+Source classes:
+
+```text
+CV PDFs -> cv
+Non-CV TIFF documents -> non_cv
+```
+
+The original CV domain labels are ignored for this binary problem. They could be reused later for a separate CV-domain classification task.
+
+## Prepare Dataset
+
+```bash
+python DocumentAI/CVDocumentClassification/training/prepare_dataset.py --cv-samples 2484 --non-cv-samples 2484 --force
+```
+
+What this does:
+
+- collects supported CV files
+- collects supported Non-CV files
+- samples categories proportionally
+- copies files under `Data/document_classification/raw/`
+- writes `Data/document_classification/manifest.csv`
+
+## Train The Model
 
 ```bash
 python DocumentAI/CVDocumentClassification/training/train_cv_document_classifier.py --epochs 8 --batch-size 32 --force
 ```
+
+Training behavior:
+
+- reads `manifest.csv`
+- creates stratified train/validation/test splits
+- renders documents into cached `.npy` page arrays
+- trains `CvDocumentCnn`
+- selects probability threshold using validation F1
+- evaluates on test set
+- saves model, metadata, and metrics
 
 ## Artifacts
 
@@ -70,34 +189,82 @@ python DocumentAI/CVDocumentClassification/training/train_cv_document_classifier
 Artifacts/models/document_ai/cv_document_classifier/model.pt
 Artifacts/models/document_ai/cv_document_classifier/metadata.json
 Artifacts/reports/document_ai/cv_document_classifier_metrics.json
+Artifacts/cache/cv_document_classifier/
 ```
 
-## Runtime Usage
+`metadata.json` stores model configuration such as:
 
-```python
-from DocumentAI.CVDocumentClassification.src.classifier import classify_document
-
-result = classify_document("candidate_cv.pdf")
+```text
+image size
+dropout
+accept threshold
+reject threshold
+text evidence thresholds
+model name
 ```
 
-## Platform Integration
+## Metrics
 
-The backend calls this classifier in:
+Reported validation/test metrics:
+
+```text
+Accuracy: 0.9973
+Precision CV: 0.9947
+Recall CV: 1.0000
+F1 CV: 0.9973
+```
+
+Important interpretation:
+
+```text
+The numbers show the model performs very well on the prepared validation split, but the source data has format bias because positives are mostly PDF CVs and negatives are mostly TIFF documents.
+```
+
+## Runtime Integration
+
+Backend route:
+
+```text
+POST /api/v1/cv/upload
+```
+
+Backend file:
 
 ```text
 Backend/TalentBridgeAPI/app/platform/routers/cv_routes.py
 ```
 
-`POST /api/v1/cv/upload` now validates the file before extraction. Candidate CV enhancement and job applications both use this route, so a Non-CV upload is rejected before NER extraction or application creation.
+Runtime behavior:
 
-## Teacher Validation Checklist
+```text
+Non-PDF file -> rejected before classification
+Classifier rejected -> upload rejected
+Classifier manual_review -> upload rejected with clearer-CV message
+Classifier accepted -> extraction and quality scoring continue
+```
 
-- Uses a real DL model, not only rules.
-- Validates document type before CV extraction.
-- Trains on balanced CV and Non-CV samples.
-- Handles both PDF and image documents through the same rendered-page representation.
-- Saves metrics and model artifacts.
+This means candidate CV enhancement and job application both require a real PDF CV.
 
-## Current Limitation
+## Validation
 
-The available positives are CV PDFs and the available negatives are TIFF document images. Rendering both to page images reduces file-format bias, but a stronger future dataset should add Non-CV PDFs and scanned CV images. The runtime text-evidence guardrail exists because real uploaded PDFs may have layouts that differ from the source CV corpus.
+```bash
+python Tests/smoke/test_cv_document_classifier.py
+python -m compileall -q DocumentAI/CVDocumentClassification
+```
+
+## Limitations And Future Improvements
+
+Current limitation:
+
+```text
+CV positives are mostly PDFs.
+Non-CV negatives are mostly TIFF images.
+```
+
+Future improvements:
+
+- add Non-CV PDFs
+- add scanned CV images
+- add invoices, contracts, certificates, reports, and letters as negatives
+- test on real user-uploaded files
+- add manual review workflow instead of only rejecting uncertain files

@@ -27,10 +27,12 @@ FEATURE_NAMES = [
 
 
 def text_selector(items: list[dict]) -> list[str]:
+    """Select raw CV text values for sklearn text vectorization."""
     return [item["text"] for item in items]
 
 
 def numeric_selector(items: list[dict]) -> list[list[float]]:
+    """Select ordered numeric feature vectors for sklearn pipelines."""
     matrix = []
     for item in items:
         features = item["features"]

@@ -14,6 +14,7 @@ _SENTENCE_TRANSFORMER_MODEL = None
 
 
 def candidate_semantic_text(extraction: dict[str, Any], target_role: str | None) -> str:
+    """Build weighted semantic text from extracted CV fields and target role."""
     skills = " ".join(extraction.get("skills", []) or [])
     degrees = " ".join(extraction.get("degrees", []) or [])
     companies = " ".join(extraction.get("companies", []) or [])
@@ -33,6 +34,7 @@ def candidate_semantic_text(extraction: dict[str, Any], target_role: str | None)
 
 
 def job_semantic_text(job: dict[str, Any]) -> str:
+    """Build weighted semantic text from a cleaned job row."""
     title = str(job.get("job_title") or "")
     category = str(job.get("category_name") or "")
     skills = str(job.get("skills_csv") or "")
@@ -72,6 +74,7 @@ def semantic_similarity_scores(candidate_semantic_text_value: str, jobs: list[di
 
 
 def scale_semantic_similarity(score: float) -> float:
+    """Map raw cosine similarity to the 0-100 matching score range."""
     score = max(0.0, min(score, 1.0))
     return min(100.0, (score ** 0.42) * 100.0)
 

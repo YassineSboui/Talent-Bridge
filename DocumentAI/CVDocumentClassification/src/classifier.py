@@ -42,6 +42,7 @@ CV_TEXT_TERMS = {
 
 
 def _load_metadata(model_dir: str | Path) -> dict[str, Any]:
+    """Load classifier metadata saved beside the PyTorch model."""
     metadata_path = Path(model_dir) / "metadata.json"
     if not metadata_path.exists():
         raise FileNotFoundError(f"Missing classifier metadata: {metadata_path}")
@@ -49,6 +50,7 @@ def _load_metadata(model_dir: str | Path) -> dict[str, Any]:
 
 
 def load_model(model_dir: str | Path = DEFAULT_MODEL_DIR, *, device: str | None = None) -> tuple[CvDocumentCnn, dict[str, Any], torch.device]:
+    """Load the CV document CNN, metadata, and runtime device."""
     model_path = Path(model_dir) / "model.pt"
     if not model_path.exists():
         raise FileNotFoundError(f"Missing CV document classifier model: {model_path}")
@@ -63,6 +65,7 @@ def load_model(model_dir: str | Path = DEFAULT_MODEL_DIR, *, device: str | None 
 
 
 def extract_pdf_text(document_path: str | Path, *, max_pages: int = 2) -> str:
+    """Extract text from the first pages of a PDF for CV evidence checks."""
     path = Path(document_path)
     if path.suffix.lower() != ".pdf":
         return ""
@@ -74,6 +77,7 @@ def extract_pdf_text(document_path: str | Path, *, max_pages: int = 2) -> str:
 
 
 def cv_text_evidence_score(text: str) -> float:
+    """Score whether document text contains CV-like sections and contacts."""
     normalized = re.sub(r"\s+", " ", text.lower()).strip()
     if not normalized:
         return 0.0

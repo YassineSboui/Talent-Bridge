@@ -24,10 +24,10 @@ Tests/             Integration and smoke tests
 Tools/             Reserved for maintenance scripts and notebooks
 ```
 
-Detailed architecture document:
+Detailed project documentation:
 
 ```text
-Docs/architecture/overview.md
+Docs/FULL_PROJECT_DOCUMENTATION.md
 ```
 
 ## Main Flow
@@ -232,10 +232,13 @@ Artifacts/models/ml/full_time_classifier_model.pkl
 Artifacts/models/ml/job_segmentation_kmeans.pkl
 ```
 
-ML report:
+ML details:
 
 ```text
-Docs/ml/ML_OBJECTIVES_REPORT.md
+MachineLearning/README.md
+MachineLearning/SalaryPrediction/README.md
+MachineLearning/JobClassification/README.md
+MachineLearning/JobSegmentation/README.md
 ```
 
 ## CV Quality

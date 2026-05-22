@@ -134,6 +134,7 @@ _DEFAULT_RESOURCES: list[dict[str, str]] = [
 
 
 def _get_resources(skill: str) -> list[dict[str, str]]:
+    """Return curated learning resources for a skill, or generic search links."""
     resources = LEARNING_RESOURCES.get(skill)
     if resources:
         return resources
@@ -149,6 +150,8 @@ def _get_resources(skill: str) -> list[dict[str, str]]:
 
 @dataclass
 class GapItem:
+    """One missing skill with priority, demand, and learning resources."""
+
     skill: str
     priority: str          # "critical" | "high" | "medium" | "low"
     demand_score: float    # 0-1 market frequency
@@ -158,6 +161,8 @@ class GapItem:
 
 @dataclass
 class SkillGapResult:
+    """Complete skill-gap analysis result for one candidate-job comparison."""
+
     matched_skills: list[str]
     missing_skills: list[str]
     extra_skills: list[str]            # candidate has but job doesn't require

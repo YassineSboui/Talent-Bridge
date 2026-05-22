@@ -23,6 +23,7 @@ DEFAULT_EXTRA_CV_DIR = Path("Data/samples/cv")
 
 
 def collect_by_category(root: Path) -> dict[str, list[Path]]:
+    """Group supported source documents by their first folder category."""
     grouped: dict[str, list[Path]] = {}
     for path in supported_files(root):
         try:
@@ -34,6 +35,7 @@ def collect_by_category(root: Path) -> dict[str, list[Path]]:
 
 
 def stratified_sample(grouped: dict[str, list[Path]], total: int, seed: int) -> list[tuple[str, Path]]:
+    """Sample documents proportionally across categories for class balance."""
     rng = random.Random(seed)
     available = {category: sorted(files) for category, files in grouped.items() if files}
     total_available = sum(len(files) for files in available.values())
@@ -66,6 +68,7 @@ def stratified_sample(grouped: dict[str, list[Path]], total: int, seed: int) -> 
 
 
 def copy_samples(samples: list[tuple[str, Path]], output_root: Path, label: str, *, start_index: int = 1) -> list[dict[str, str]]:
+    """Copy sampled files into the dataset tree and return manifest rows."""
     rows: list[dict[str, str]] = []
     for index, (category, source_path) in enumerate(samples, start=start_index):
         safe_category = category.replace(" ", "_")
@@ -88,6 +91,7 @@ def copy_samples(samples: list[tuple[str, Path]], output_root: Path, label: str,
 
 
 def write_manifest(output_dir: Path, rows: list[dict[str, str]]) -> None:
+    """Write dataset metadata used by the training script."""
     manifest_path = output_dir / "manifest.csv"
     with manifest_path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=["sample_id", "label", "category", "relative_path", "original_path", "extension"])
@@ -96,6 +100,7 @@ def write_manifest(output_dir: Path, rows: list[dict[str, str]]) -> None:
 
 
 def main() -> None:
+    """Prepare the local balanced CV and Non-CV classification dataset."""
     parser = argparse.ArgumentParser(description="Prepare balanced CV-vs-Non-CV dataset")
     parser.add_argument("--cv-source", type=Path, default=DEFAULT_CV_SOURCE)
     parser.add_argument("--non-cv-source", type=Path, default=DEFAULT_NON_CV_SOURCE)

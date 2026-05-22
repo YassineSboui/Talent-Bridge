@@ -12,6 +12,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
 def validate(dataset_path: Path) -> dict:
+    """Validate CV quality JSONL records and return dataset recommendations."""
     records = []
     errors = []
     with dataset_path.open("r", encoding="utf-8") as file:
@@ -56,6 +57,7 @@ def validate(dataset_path: Path) -> dict:
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse the CV quality dataset path to validate."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--dataset",
@@ -65,6 +67,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    """Print validation summary for the configured quality dataset."""
     args = parse_args()
     print(json.dumps(validate(Path(args.dataset)), indent=2, ensure_ascii=False))
 

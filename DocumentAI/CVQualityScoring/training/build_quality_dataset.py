@@ -25,6 +25,7 @@ from DocumentAI.CVQualityScoring.src.quality import classify_cv_quality  # noqa:
 
 
 def build_dataset(input_paths: list[Path], output_path: Path, synthetic_negatives: bool = True) -> int:
+    """Build a weak-labeled Pro/Non Pro dataset from PDF CV inputs."""
     output_path.parent.mkdir(parents=True, exist_ok=True)
     records = []
 
@@ -110,6 +111,7 @@ def _make_synthetic_non_pro_records(pdf_path: Path, text: str) -> list[dict]:
 
 
 def _iter_pdfs(paths: list[Path]):
+    """Yield unique PDF files from explicit paths or directories."""
     seen = set()
     for path in paths:
         path = path.resolve()
@@ -126,6 +128,7 @@ def _iter_pdfs(paths: list[Path]):
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse dataset input/output options for weak-label generation."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--input",
@@ -147,6 +150,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    """Build the weak-labeled quality dataset from CLI arguments."""
     args = parse_args()
     inputs = [Path(value) for value in args.input] if args.input else [
         REPO_ROOT / "Backend" / "TalentBridgeAPI" / "test_cv.pdf",

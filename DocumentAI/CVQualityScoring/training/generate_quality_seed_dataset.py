@@ -61,6 +61,7 @@ COMPANIES = ["NeoLedge", "Sofiatech", "Telnet", "Vermeg", "Talan", "Actia", "Oor
 
 
 def make_pro_cv(index: int) -> str:
+    """Generate one synthetic professional CV text sample."""
     profile = random.choice(PROFILES)
     name = NAMES[index % len(NAMES)]
     school = random.choice(SCHOOLS)
@@ -110,6 +111,7 @@ Scrum Fundamentals · Microsoft Data Fundamentals · Git/GitHub Training
 
 
 def make_non_pro_cv(index: int) -> str:
+    """Generate one synthetic weak or incomplete CV text sample."""
     variants = [
         f"""{NAMES[index % len(NAMES)]}
 looking job computer
@@ -144,6 +146,7 @@ good communication
 
 
 def record_from_text(text: str, label: str, index: int, synthetic_type: str) -> dict:
+    """Wrap synthetic CV text with quality features and label metadata."""
     quality = classify_cv_quality(text, extraction={})
     return {
         "file_path": f"synthetic://{synthetic_type}/{index}",
@@ -161,6 +164,7 @@ def record_from_text(text: str, label: str, index: int, synthetic_type: str) -> 
 
 
 def generate(count_per_class: int) -> list[dict]:
+    """Generate balanced synthetic Pro and Non Pro seed records."""
     records = []
     for index in range(count_per_class):
         records.append(record_from_text(make_pro_cv(index), "Pro", index, "pro"))
@@ -169,6 +173,7 @@ def generate(count_per_class: int) -> list[dict]:
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse output paths and class counts for seed data generation."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--count-per-class", type=int, default=40)
     parser.add_argument(
@@ -187,6 +192,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    """Write seed and merged CV quality JSONL datasets."""
     args = parse_args()
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)

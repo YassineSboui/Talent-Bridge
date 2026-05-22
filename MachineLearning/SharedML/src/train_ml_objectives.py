@@ -86,6 +86,7 @@ NUMERIC_COLUMNS = [
 
 
 def main() -> None:
+    """Train all SQL-backed ML objectives and write artifacts/reports."""
     args = parse_args()
     models_dir = Path(args.models_dir)
     reports_dir = Path(args.reports_dir)
@@ -116,6 +117,7 @@ def main() -> None:
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse CLI options for source selection, sampling, and output paths."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", choices=["sql", "csv"], default="sql", help="Official source is sql. csv is a development fallback only.")
     parser.add_argument("--csv", default=str(DEFAULT_CSV))
@@ -128,6 +130,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def load_jobs(args: argparse.Namespace) -> pd.DataFrame:
+    """Load jobs from SQL by default, or CSV as a development fallback."""
     if args.source == "sql":
         return load_jobs_from_sql(max_rows=args.max_rows)
     max_rows = None if args.max_rows == 0 else args.max_rows
@@ -135,6 +138,7 @@ def load_jobs(args: argparse.Namespace) -> pd.DataFrame:
 
 
 def load_jobs_from_sql(max_rows: int = 150000) -> pd.DataFrame:
+    """Read cleaned ML training rows from dbo.vw_ml_jobs."""
     try:
         import pyodbc
     except ImportError as exc:
@@ -179,6 +183,7 @@ def load_jobs_from_sql(max_rows: int = 150000) -> pd.DataFrame:
 
 
 def prepare_jobs(df: pd.DataFrame) -> pd.DataFrame:
+    """Clean raw warehouse columns and create reusable ML feature columns."""
     data = df.copy()
     for column in CSV_COLUMNS:
         if column not in data.columns:
@@ -215,6 +220,7 @@ def prepare_jobs(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def train_salary_regression(df: pd.DataFrame, models_dir: Path, random_state: int) -> dict[str, Any]:
+    """Train and save the best salary regression pipeline."""
     salary_df = df[pd.to_numeric(df["salary_year_avg"], errors="coerce").notna()].copy()
     salary_df["salary_year_avg"] = pd.to_numeric(salary_df["salary_year_avg"], errors="coerce")
     salary_df = salary_df[(salary_df["salary_year_avg"] >= 10000) & (salary_df["salary_year_avg"] <= 400000)]
@@ -278,6 +284,7 @@ def train_salary_regression(df: pd.DataFrame, models_dir: Path, random_state: in
 
 
 def train_remote_classifier(df: pd.DataFrame, models_dir: Path, random_state: int) -> dict[str, Any]:
+    """Train the remote-vs-onsite classification objective."""
     data = df[df["is_remote"].notna()].copy()
     return train_classifier(
         data,
@@ -291,6 +298,7 @@ def train_remote_classifier(df: pd.DataFrame, models_dir: Path, random_state: in
 
 
 def train_full_time_classifier(df: pd.DataFrame, models_dir: Path, random_state: int) -> dict[str, Any]:
+    """Train the full-time-vs-other schedule classification objective."""
     data = df[df["is_full_time"].notna()].copy()
     return train_classifier(
         data,
@@ -312,6 +320,7 @@ def train_classifier(
     random_state: int,
     excluded_features: set[str] | None = None,
 ) -> dict[str, Any]:
+    """Train a reusable supervised classifier and return validation metrics."""
     if len(data) < 500 or data[target_column].nunique() < 2:
         return {"status": "skipped", "reason": "Not enough labeled rows", "rows": int(len(data))}
 
@@ -393,6 +402,7 @@ def train_classifier(
 
 
 def train_job_segmentation(df: pd.DataFrame, models_dir: Path, reports_dir: Path, random_state: int) -> dict[str, Any]:
+    """Cluster similar job postings and save cluster profiles."""
     data = df.copy()
     if len(data) < 1000:
         return {"status": "skipped", "reason": "Not enough rows", "rows": int(len(data))}
@@ -470,6 +480,7 @@ def train_job_segmentation(df: pd.DataFrame, models_dir: Path, reports_dir: Path
 
 
 def try_hdbscan(reduced: np.ndarray, data: pd.DataFrame, random_state: int) -> dict[str, Any] | None:
+    """Try optional HDBSCAN clustering when the dependency is installed."""
     try:
         import hdbscan
     except Exception:
@@ -495,6 +506,7 @@ def try_hdbscan(reduced: np.ndarray, data: pd.DataFrame, random_state: int) -> d
 
 
 def make_preprocessor(features: list[str], text_features: int, min_frequency: int) -> ColumnTransformer:
+    """Build the shared text, categorical, and numeric preprocessing pipeline."""
     categorical_columns = [column for column in CATEGORICAL_COLUMNS if column in features]
     numeric_columns = [column for column in NUMERIC_COLUMNS if column in features]
     return ColumnTransformer(
@@ -528,11 +540,13 @@ def make_preprocessor(features: list[str], text_features: int, min_frequency: in
 
 
 def feature_columns(exclude: set[str] | None = None) -> list[str]:
+    """Return model feature columns after removing target-leakage fields."""
     exclude = exclude or set()
     return [column for column in ["ml_text", *CATEGORICAL_COLUMNS, *NUMERIC_COLUMNS] if column not in exclude]
 
 
 def regression_metrics(y_true: pd.Series, y_pred: np.ndarray) -> dict[str, float]:
+    """Compute salary regression validation metrics."""
     y_pred = np.maximum(y_pred, 0)
     rmse = mean_squared_error(y_true, y_pred) ** 0.5
     mae = mean_absolute_error(y_true, y_pred)
@@ -546,6 +560,7 @@ def regression_metrics(y_true: pd.Series, y_pred: np.ndarray) -> dict[str, float
 
 
 def classification_metrics(y_true: pd.Series, y_pred: np.ndarray) -> dict[str, Any]:
+    """Compute classification metrics and a rounded class report."""
     report = classification_report(y_true, y_pred, output_dict=True, zero_division=0)
     return {
         "accuracy": round(float(accuracy_score(y_true, y_pred)), 4),
@@ -556,6 +571,7 @@ def classification_metrics(y_true: pd.Series, y_pred: np.ndarray) -> dict[str, A
 
 
 def cluster_profile(df: pd.DataFrame, labels: np.ndarray) -> list[dict[str, Any]]:
+    """Summarize each discovered job cluster for reporting."""
     profiled = df.copy()
     profiled["cluster"] = labels
     salary = pd.to_numeric(profiled["salary_year_avg"], errors="coerce")
@@ -580,11 +596,13 @@ def cluster_profile(df: pd.DataFrame, labels: np.ndarray) -> list[dict[str, Any]
 
 
 def top_values(values: pd.Series, limit: int) -> list[dict[str, Any]]:
+    """Return the most common values in a series for cluster reporting."""
     counts = values.fillna("unknown").astype(str).value_counts().head(limit)
     return [{"value": str(index), "count": int(count)} for index, count in counts.items()]
 
 
 def top_skills(values: pd.Series, limit: int) -> list[dict[str, Any]]:
+    """Return the most common parsed skills for a cluster."""
     counter: Counter[str] = Counter()
     for value in values.fillna(""):
         for skill in parse_skills(value):
@@ -593,6 +611,7 @@ def top_skills(values: pd.Series, limit: int) -> list[dict[str, Any]]:
 
 
 def to_bool(value: Any) -> bool:
+    """Convert common truthy values from CSV/SQL into booleans."""
     if isinstance(value, bool):
         return value
     text = str(value).strip().lower()
@@ -600,6 +619,7 @@ def to_bool(value: Any) -> bool:
 
 
 def primary_schedule(value: Any) -> str:
+    """Extract the primary schedule label from a multi-value schedule field."""
     text = str(value or "unknown").strip().lower()
     if not text or text == "nan":
         return "unknown"
@@ -608,6 +628,7 @@ def primary_schedule(value: Any) -> str:
 
 
 def portal_family(value: Any) -> str:
+    """Normalize a job source string into a compact portal family."""
     text = str(value or "unknown").lower()
     text = re.sub(r"^via\s+", "", text).strip()
     for marker in ["linkedin", "indeed", "beBee".lower(), "glassdoor", "ziprecruiter", "company site"]:
@@ -617,22 +638,26 @@ def portal_family(value: Any) -> str:
 
 
 def count_skills(value: Any) -> int:
+    """Count parsed skills in a raw skill-list field."""
     return len(parse_skills(value))
 
 
 def parse_skills(value: Any) -> list[str]:
+    """Parse a raw comma/semicolon skill field into cleaned skill labels."""
     text = str(value or "")
     skills = [item.strip(" '\"[]{}") for item in re.split(r"[,;]", text) if item.strip(" '\"[]{}")]
     return [skill for skill in skills if skill.lower() not in {"nan", "none", "unknown"}]
 
 
 def clean_text(value: Any) -> str:
+    """Normalize text for TF-IDF feature extraction."""
     text = str(value or "").lower()
     text = re.sub(r"[^a-z0-9+#.\s-]", " ", text)
     return re.sub(r"\s+", " ", text).strip()
 
 
 def round_report(report: dict[str, Any]) -> dict[str, Any]:
+    """Round sklearn classification report floats for stable JSON output."""
     rounded = {}
     for key, value in report.items():
         if isinstance(value, dict):
@@ -643,6 +668,7 @@ def round_report(report: dict[str, Any]) -> dict[str, Any]:
 
 
 def save_pickle(payload: dict[str, Any], output_path: Path) -> None:
+    """Persist a model artifact with parent directory creation."""
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("wb") as file:
         pickle.dump(payload, file)

@@ -35,6 +35,7 @@ from DocumentAI.CVQualityScoring.src.quality_model import FEATURE_NAMES, numeric
 
 
 def load_records(dataset_path: Path) -> list[dict]:
+    """Load labeled Pro/Non Pro CV records from a JSONL dataset."""
     records = []
     with dataset_path.open("r", encoding="utf-8") as file:
         for line in file:
@@ -48,6 +49,7 @@ def load_records(dataset_path: Path) -> list[dict]:
 
 
 def feature_matrix(records: list[dict]) -> list[dict]:
+    """Recompute text and numeric quality features for sklearn training."""
     items = []
     for record in records:
         # Recompute features so older JSONL files automatically benefit from
@@ -58,6 +60,7 @@ def feature_matrix(records: list[dict]) -> list[dict]:
 
 
 def train(dataset_path: Path, output_path: Path) -> dict:
+    """Train and save the legacy sklearn Pro/Non Pro classifier."""
     records = load_records(dataset_path)
     if len(records) < 2:
         raise RuntimeError("Need at least 2 labeled records to train the quality model.")
@@ -140,6 +143,7 @@ def train(dataset_path: Path, output_path: Path) -> dict:
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse dataset and model artifact paths for sklearn training."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--dataset",
@@ -155,6 +159,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    """CLI entry point for sklearn CV quality model training."""
     args = parse_args()
     result = train(Path(args.dataset), Path(args.output))
     print(json.dumps(result, indent=2, ensure_ascii=False))

@@ -1,56 +1,133 @@
-# ML Salary Prediction Mini-Project
+# Salary Prediction
 
-## What It Does
+## What This Module Does
 
-Predicts yearly salary from cleaned SQL warehouse job characteristics.
+This objective predicts yearly salary from cleaned job-market data.
 
-Target:
+Target column:
 
 ```text
 salary_year_avg
 ```
 
-## Why It Exists
+Problem type:
 
-The business objective is to estimate fair salary ranges based on role, country, skills, schedule, remote signal, and other job features.
+```text
+Regression
+```
+
+Regression is used because salary is a continuous numeric value.
+
+## Why It Was Built
+
+Salary prediction helps understand how role, location, schedule, skills, company, and job source relate to salary level.
+
+It supports the business question:
+
+```text
+Can we estimate a fair salary range from job characteristics?
+```
 
 ## Official Data Source
+
+Objective-specific SQL view:
 
 ```text
 DW_DataJobs.dbo.vw_ml_salary_training
 ```
 
-The full ML runner reads from:
+The central runner reads from:
 
 ```text
 DW_DataJobs.dbo.vw_ml_jobs
 ```
 
-and filters valid salary rows.
+and keeps rows where `salary_year_avg` is valid.
 
-## How It Works
+## Implementation
 
-1. Load cleaned SQL warehouse rows.
-2. Keep rows with valid salary.
-3. Build text, categorical, and numeric features.
-4. Train log-transformed regression models.
-5. Compare Ridge and RandomForest candidates.
-6. Select the best model by RMSE.
-
-The implementation is centralized in:
+Main implementation:
 
 ```text
 MachineLearning/SharedML/src/train_ml_objectives.py
+```
+
+Relevant function:
+
+```text
+train_salary_regression
+```
+
+Backend launcher:
+
+```text
 Backend/TalentBridgeAPI/scripts/train_ml_objectives.py
+```
+
+## How It Works
+
+```text
+load cleaned SQL rows
+-> filter valid salary values
+-> remove unrealistic salary outliers
+-> build text/categorical/numeric features
+-> train candidate regression pipelines
+-> compare by RMSE
+-> save best model artifact
+-> write metrics report
+```
+
+Candidate models include:
+
+```text
+Ridge regression with log-transformed salary target
+RandomForestRegressor candidate when dataset size allows
+```
+
+The target is transformed with `log1p` and inverted with `expm1` to reduce the effect of very large salaries.
+
+## Features
+
+Feature groups:
+
+```text
+ml_text
+job title
+short title/category
+location and country
+portal/source
+schedule
+remote flag
+no-degree flag
+health-insurance flag
+company name
+skills
+skill count
+posted date parts
+title length
+```
+
+Preprocessing:
+
+```text
+TF-IDF for text
+OneHotEncoder for categorical fields
+SimpleImputer + StandardScaler for numeric fields
 ```
 
 ## Latest SQL-Based Metrics
 
 ```text
 R2: 0.5041
-MAE: 26,051.96
-RMSE: 32,563.83
+MAE: 26051.96
+RMSE: 32563.83
 ```
+
+Interpretation:
+
+- `R2` shows the model captures a useful part of salary variation.
+- `MAE` means the average absolute salary error is about 26k.
+- salary data is sparse and noisy, so this objective is naturally limited.
 
 ## Artifacts
 
@@ -63,14 +140,13 @@ Artifacts/reports/ml/ml_objectives_metrics.json
 
 ```bash
 cd Backend/TalentBridgeAPI
-python scripts/train_ml_objectives.py --max-rows 60000 --sample-size 24000
+python scripts/train_ml_objectives.py --source sql --max-rows 60000 --sample-size 24000
 ```
 
-## Teacher Validation Checklist
+## Validation Checklist
 
-- Uses SQL warehouse data, not raw CSV.
-- Implementation path is documented.
-- Predicts `salary_year_avg`.
+- Uses SQL warehouse data.
+- Predicts a numeric salary target.
 - Reports MAE, RMSE, and R2.
-- Saves trained model artifact.
-- Explains sparse salary limitation.
+- Saves a model artifact.
+- Explains salary sparsity limitation.

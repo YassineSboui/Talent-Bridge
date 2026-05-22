@@ -70,6 +70,7 @@ def get_dominant_label(record):
 
 
 def main():
+    """Convert cleaned NER records into spaCy train/dev DocBin files."""
     random.seed(42)
 
     project_root = Path(__file__).parent.parent

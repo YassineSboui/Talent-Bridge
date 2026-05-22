@@ -10,6 +10,7 @@ class CvDocumentCnn(nn.Module):
     """Compact CNN that classifies a rendered document page as CV or Non-CV."""
 
     def __init__(self, dropout: float = 0.25) -> None:
+        """Create convolution and classifier layers for page-image input."""
         super().__init__()
         self.features = nn.Sequential(
             nn.Conv2d(1, 16, kernel_size=3, padding=1),
@@ -39,4 +40,5 @@ class CvDocumentCnn(nn.Module):
         )
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+        """Return one logit per rendered document page."""
         return self.classifier(self.features(inputs)).squeeze(1)

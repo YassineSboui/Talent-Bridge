@@ -25,6 +25,7 @@ SECTION_PATTERNS = {
 
 
 def extract_quality_features(text: str, extraction: dict[str, Any]) -> dict[str, Any]:
+    """Extract structural and content signals used by CV quality scoring."""
     tokens = re.findall(r"\b\w+\b", text)
     words = [token for token in tokens if len(token) > 1]
     short_tokens = [token for token in tokens if len(token) <= 1]
@@ -71,11 +72,13 @@ def extract_quality_features(text: str, extraction: dict[str, Any]) -> dict[str,
 
 
 def normalize_cv_text(text: str) -> str:
+    """Normalize CV text casing, spacing, and accents for feature extraction."""
     text = re.sub(r"[ \t]+", " ", text or "").strip().lower()
     return "".join(char for char in unicodedata.normalize("NFKD", text) if not unicodedata.combining(char))
 
 
 def repeated_line_ratio_for(text: str) -> float:
+    """Estimate how much of the CV is repeated line content."""
     lines = [line.strip().lower() for line in text.splitlines() if len(line.strip()) >= 15]
     if not lines:
         return 0.0
@@ -83,4 +86,5 @@ def repeated_line_ratio_for(text: str) -> float:
 
 
 def bullet_line_count_for(text: str) -> int:
+    """Count bullet or numbered-list lines in the CV text."""
     return sum(1 for line in text.splitlines() if re.match(r"^\s*(?:[-*]|\u2022|\d+[.)])\s+", line))

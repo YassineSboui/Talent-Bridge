@@ -13,6 +13,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
 def merge_manual_labels(input_csv: Path, output_jsonl: Path) -> int:
+    """Convert reviewed manual CSV labels into model-training JSONL records."""
     output_jsonl.parent.mkdir(parents=True, exist_ok=True)
     records = []
     with input_csv.open("r", encoding="utf-8-sig", newline="") as file:
@@ -43,6 +44,7 @@ def merge_manual_labels(input_csv: Path, output_jsonl: Path) -> int:
 
 
 def main() -> None:
+    """CLI entry point for merging manually reviewed CV labels."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", default=str(REPO_ROOT / "DocumentAI" / "CVQualityScoring" / "data" / "manual_labeling_template.csv"))
     parser.add_argument("--output", default=str(REPO_ROOT / "DocumentAI" / "CVQualityScoring" / "data" / "cv_quality_manual.jsonl"))

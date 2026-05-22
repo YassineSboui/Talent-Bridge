@@ -21,6 +21,7 @@ _QUALITY_DL_ARTIFACT: dict[str, Any] | None = None
 
 
 def load_quality_dl_model(model_dir: str | Path = QUALITY_DL_MODEL_DIR) -> dict[str, Any] | None:
+    """Load the CV quality MLP, vectorizer, scaler, and metadata if present."""
     global _QUALITY_DL_ARTIFACT
     if _QUALITY_DL_ARTIFACT is not None:
         return _QUALITY_DL_ARTIFACT
@@ -50,6 +51,7 @@ def load_quality_dl_model(model_dir: str | Path = QUALITY_DL_MODEL_DIR) -> dict[
 
 
 def predict_with_dl_quality_model(text: str, features: dict[str, Any]) -> dict[str, Any] | None:
+    """Predict CV quality score and grade with the PyTorch MLP artifact."""
     artifact = load_quality_dl_model()
     if not artifact:
         return None

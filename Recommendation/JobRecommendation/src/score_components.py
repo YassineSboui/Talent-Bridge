@@ -44,6 +44,7 @@ LOW_SIGNAL_SKILLS = {
 
 
 def score_skills(candidate_skills: list[str], job_skills: list[str], target_role: str | None, role_score: float) -> float:
+    """Score direct skill overlap and role-core skill coverage."""
     candidate_set = set(candidate_skills)
     job_set = set(job_skills)
     matched = candidate_set & job_set
@@ -70,6 +71,7 @@ def score_skills(candidate_skills: list[str], job_skills: list[str], target_role
 
 
 def apply_match_caps(raw_score: float, skills_score: float, role_score: float, matched_skills: list[str], job_skills: list[str], target_role: str | None) -> float:
+    """Cap weak matches so role text alone cannot create false positives."""
     score = raw_score
     matched_set = set(matched_skills)
     core_matches = matched_set & core_skills_for_role(target_role)
@@ -90,6 +92,7 @@ def apply_match_caps(raw_score: float, skills_score: float, role_score: float, m
 
 
 def score_role(target_role: str | None, category_name: str | None, job_title: str | None) -> float:
+    """Score how well a job title/category matches the candidate target role."""
     if not target_role:
         return 70.0
     target = normalize_text(target_role)
@@ -109,6 +112,7 @@ def score_role(target_role: str | None, category_name: str | None, job_title: st
 
 
 def infer_job_seniority(job_title: str | None, category_name: str | None = None) -> str:
+    """Infer required seniority level from job title and category text."""
     text = normalize_text(" ".join(value for value in [job_title, category_name] if value))
     if re.search(r"\b(intern|internship|stage|stagiaire|trainee|apprentice|alternance)\b", text):
         return "intern"
@@ -122,6 +126,7 @@ def infer_job_seniority(job_title: str | None, category_name: str | None = None)
 
 
 def score_experience(candidate_level: str | None, job_title: str | None, category_name: str | None) -> float:
+    """Score candidate seniority compatibility with inferred job seniority."""
     if not candidate_level:
         return 70.0
     job_level = infer_job_seniority(job_title, category_name)
@@ -138,6 +143,7 @@ def score_experience(candidate_level: str | None, job_title: str | None, categor
 
 
 def score_education(candidate_degrees: list[str], no_degree_mention: Any) -> float:
+    """Score education compatibility using extracted degrees and job flags."""
     if candidate_degrees:
         return 100.0
     if bool(no_degree_mention):
@@ -146,6 +152,7 @@ def score_education(candidate_degrees: list[str], no_degree_mention: Any) -> flo
 
 
 def score_location(preferred_country: str | None, remote_preference: str, job: dict[str, Any], remote_only: str, remote_onsite: str) -> float:
+    """Score country and remote-work preference alignment."""
     is_remote = bool(job.get("is_work_from_home"))
     if remote_preference == remote_only:
         return 100.0 if is_remote else 0.0
@@ -157,6 +164,7 @@ def score_location(preferred_country: str | None, remote_preference: str, job: d
 
 
 def score_opportunity(job: dict[str, Any]) -> float:
+    """Score positive job opportunity signals such as salary and remote work."""
     score = 0.0
     if bool(job.get("has_salary_info")):
         score += 40.0
@@ -170,6 +178,7 @@ def score_opportunity(job: dict[str, Any]) -> float:
 
 
 def core_skills_for_role(target_role: str | None) -> set[str]:
+    """Return canonical core skills for a target role when known."""
     target = normalize_text(target_role)
     if target in ROLE_CORE_SKILLS:
         return ROLE_CORE_SKILLS[target]
@@ -180,6 +189,7 @@ def core_skills_for_role(target_role: str | None) -> set[str]:
 
 
 def role_core_coverage(candidate_skills: set[str], core_skills: set[str]) -> float:
+    """Estimate how many role-critical skills the candidate already has."""
     if not core_skills:
         return 0.5
     required = min(5, len(core_skills))

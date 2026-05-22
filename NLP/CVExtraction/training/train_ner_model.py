@@ -19,6 +19,7 @@ import spacy
 
 
 def has_gpu():
+    """Return whether PyTorch can see a CUDA GPU for spaCy training."""
     try:
         import torch
         return torch.cuda.is_available()
@@ -81,6 +82,7 @@ def patch_config(config_path, train_path, dev_path):
 
 
 def main():
+    """Generate config, train the spaCy NER model, and evaluate it."""
     project_root = Path(__file__).parent.parent
     data_dir = project_root / "data" / "processed"
     config_dir = project_root / "configs"

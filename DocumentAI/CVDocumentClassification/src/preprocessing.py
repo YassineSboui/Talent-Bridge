@@ -14,10 +14,12 @@ SUPPORTED_EXTENSIONS = {".pdf", ".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp"
 
 
 def is_supported_document(path: str | Path) -> bool:
+    """Return whether a file extension can be rendered for classification."""
     return Path(path).suffix.lower() in SUPPORTED_EXTENSIONS
 
 
 def supported_files(root: str | Path) -> Iterable[Path]:
+    """Yield all supported documents under a directory tree."""
     root_path = Path(root)
     for path in root_path.rglob("*"):
         if path.is_file() and is_supported_document(path):

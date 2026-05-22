@@ -10,6 +10,7 @@ _QUALITY_MODEL_ARTIFACT = None
 
 
 def predict_with_trained_model(text: str, features: dict[str, Any]) -> dict[str, Any] | None:
+    """Run the legacy sklearn CV quality model when its artifact exists."""
     artifact = load_quality_model()
     if not artifact:
         return None
@@ -32,6 +33,7 @@ def predict_with_trained_model(text: str, features: dict[str, Any]) -> dict[str,
 
 
 def load_quality_model() -> dict[str, Any] | None:
+    """Load and cache the legacy sklearn CV quality artifact."""
     global _QUALITY_MODEL_ARTIFACT
     if _QUALITY_MODEL_ARTIFACT is not None:
         return _QUALITY_MODEL_ARTIFACT

@@ -13,6 +13,7 @@ def build_explanation(
     semantic_score: float,
     job_skills: list[str],
 ) -> list[str]:
+    """Generate human-readable reasons behind a job match score."""
     explanation = []
     if matched_skills:
         explanation.append(f"Matched {len(matched_skills)} skills: {', '.join(matched_skills[:8])}")

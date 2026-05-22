@@ -2,6 +2,7 @@ from __future__ import annotations
 
 
 def quality_hard_gates(features: dict) -> list[str]:
+    """Return severe CV issues that force or cap a Non Pro decision."""
     gates = []
     if features["text_too_short"]:
         gates.append("CV text is too short to be considered professional.")
@@ -17,6 +18,7 @@ def quality_hard_gates(features: dict) -> list[str]:
 
 
 def add_score(condition: bool, points: int, positive: str, issue: str, positive_checks: list[str], issues: list[str]) -> int:
+    """Add rule points and record either a positive check or issue."""
     if condition:
         positive_checks.append(positive)
         return points
@@ -25,10 +27,12 @@ def add_score(condition: bool, points: int, positive: str, issue: str, positive_
 
 
 def bounded_score(value: float) -> int:
+    """Clamp a score to the inclusive 0-100 integer range."""
     return int(max(0, min(round(value), 100)))
 
 
 def decision_confidence(score: int, hard_gates: list[str], model_prediction: dict | None, rule_label: str, quality_label: str) -> float:
+    """Estimate confidence from score distance, hard gates, and model agreement."""
     distance = abs(score - 70) / 30
     confidence = min(0.98, 0.62 + max(0, distance) * 0.22)
     if hard_gates:

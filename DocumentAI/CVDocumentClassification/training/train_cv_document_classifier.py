@@ -32,16 +32,21 @@ DEFAULT_CACHE_DIR = Path("Artifacts/cache/cv_document_classifier")
 
 
 class DocumentDataset(Dataset):
+    """Torch dataset that renders/caches documents as page-image tensors."""
+
     def __init__(self, rows: list[dict[str, str]], data_dir: Path, cache_dir: Path, image_size: tuple[int, int]) -> None:
+        """Store manifest rows and rendering cache configuration."""
         self.rows = rows
         self.data_dir = data_dir
         self.cache_dir = cache_dir
         self.image_size = image_size
 
     def __len__(self) -> int:
+        """Return the number of manifest rows in the dataset split."""
         return len(self.rows)
 
     def __getitem__(self, index: int):
+        """Return one rendered document tensor and its binary CV label."""
         row = self.rows[index]
         sample_id = row["sample_id"]
         cache_path = self.cache_dir / f"{sample_id}_{self.image_size[0]}x{self.image_size[1]}.npy"
@@ -57,6 +62,7 @@ class DocumentDataset(Dataset):
 
 
 def read_manifest(data_dir: Path) -> list[dict[str, str]]:
+    """Load dataset manifest rows from the prepared dataset directory."""
     manifest_path = data_dir / "manifest.csv"
     if not manifest_path.exists():
         raise FileNotFoundError(f"Missing manifest: {manifest_path}")
@@ -65,6 +71,7 @@ def read_manifest(data_dir: Path) -> list[dict[str, str]]:
 
 
 def set_seed(seed: int) -> None:
+    """Seed Python, NumPy, and PyTorch for reproducible training."""
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -73,6 +80,7 @@ def set_seed(seed: int) -> None:
 
 
 def split_rows(rows: list[dict[str, str]], seed: int) -> tuple[list[dict[str, str]], list[dict[str, str]], list[dict[str, str]]]:
+    """Create stratified train, validation, and test manifest splits."""
     labels = [row["label"] for row in rows]
     train_rows, remaining_rows = train_test_split(rows, test_size=0.3, random_state=seed, stratify=labels)
     remaining_labels = [row["label"] for row in remaining_rows]
@@ -81,6 +89,7 @@ def split_rows(rows: list[dict[str, str]], seed: int) -> tuple[list[dict[str, st
 
 
 def run_epoch(model, loader, criterion, optimizer, device: torch.device) -> float:
+    """Run one training or validation epoch and return average loss."""
     model.train(optimizer is not None)
     total_loss = 0.0
     total_samples = 0
@@ -100,6 +109,7 @@ def run_epoch(model, loader, criterion, optimizer, device: torch.device) -> floa
 
 
 def predict(model, loader, device: torch.device) -> tuple[np.ndarray, np.ndarray]:
+    """Predict CV probabilities and collect labels for a loader."""
     model.eval()
     labels: list[float] = []
     probabilities: list[float] = []
@@ -113,12 +123,14 @@ def predict(model, loader, device: torch.device) -> tuple[np.ndarray, np.ndarray
 
 
 def best_threshold(labels: np.ndarray, probabilities: np.ndarray) -> tuple[float, float]:
+    """Choose the probability threshold with the best validation F1."""
     candidates = np.linspace(0.2, 0.8, 61)
     scored = [(float(threshold), f1_score(labels, probabilities >= threshold, zero_division=0)) for threshold in candidates]
     return max(scored, key=lambda item: item[1])
 
 
 def metrics_for(labels: np.ndarray, probabilities: np.ndarray, threshold: float) -> dict:
+    """Compute binary CV classification metrics at a selected threshold."""
     predictions = (probabilities >= threshold).astype(np.int32)
     return {
         "accuracy": round(float(accuracy_score(labels, predictions)), 4),
@@ -131,6 +143,7 @@ def metrics_for(labels: np.ndarray, probabilities: np.ndarray, threshold: float)
 
 
 def main() -> None:
+    """Train the CNN classifier and save model metadata and reports."""
     parser = argparse.ArgumentParser(description="Train CV-vs-Non-CV CNN classifier")
     parser.add_argument("--data-dir", type=Path, default=DEFAULT_DATA_DIR)
     parser.add_argument("--model-dir", type=Path, default=DEFAULT_MODEL_DIR)

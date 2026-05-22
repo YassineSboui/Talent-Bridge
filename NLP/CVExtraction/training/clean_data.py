@@ -131,6 +131,7 @@ def remove_zones_from_text(text, zones):
     new_text = "".join(new_text_parts)
 
     def map_offset(old_pos):
+        """Map an original character offset to its new cleaned-text offset."""
         return old_to_new.get(old_pos)
 
     return new_text, map_offset
@@ -268,6 +269,7 @@ def oversample_rare_entities(records, max_multiplier=3):
 
 
 def main():
+    """Clean raw NER JSONL annotations and write a balanced processed dataset."""
     # Paths
     project_root = Path(__file__).parent.parent
     raw_path = project_root.parent / "CV_Ners.jsonl"

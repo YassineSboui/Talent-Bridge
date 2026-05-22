@@ -41,11 +41,13 @@ COMPANIES = ["NeoLedge", "Talan", "Vermeg", "Actia", "Telnet", "Ooredoo", "Sofre
 
 
 def iter_pdfs(input_dir: Path, limit: int | None = None) -> list[Path]:
+    """Return CV PDF paths from an input directory, optionally capped."""
     files = sorted(input_dir.rglob("*.pdf"))
     return files[:limit] if limit else files
 
 
 def rubric_score(text: str, features: dict[str, Any]) -> tuple[int, dict[str, int]]:
+    """Compute the pseudo-label score from explainable CV quality rubric parts."""
     score_parts = {
         "contact": 0,
         "core_sections": 0,
@@ -73,6 +75,7 @@ def rubric_score(text: str, features: dict[str, Any]) -> tuple[int, dict[str, in
 
 
 def make_variant(text: str, variant: str) -> str:
+    """Create degraded synthetic variants from real CV text for calibration."""
     words = text.split()
     if variant == "poor_short":
         return " ".join(words[:55])
@@ -89,6 +92,7 @@ def make_variant(text: str, variant: str) -> str:
 
 
 def record_for_text(file_path: str, text: str, *, category: str, synthetic: bool, variant: str | None = None) -> dict[str, Any]:
+    """Build one pseudo-labeled CV quality training record."""
     normalized = normalize_cv_text(text)
     features = extract_quality_features(normalized, {})
     score, score_parts = rubric_score(normalized, features)
@@ -110,6 +114,7 @@ def record_for_text(file_path: str, text: str, *, category: str, synthetic: bool
 
 
 def synthetic_grade_text(grade: str, index: int) -> tuple[str, int]:
+    """Generate controlled synthetic CV text for a target quality grade."""
     role = ROLES[index % len(ROLES)]
     name = f"Candidate {grade} {index:03d}"
     skill_line = ", ".join(random.sample(SKILLS, 7))
@@ -229,6 +234,7 @@ good worker motivated serious
 
 
 def synthetic_grade_records(count_per_grade: int) -> list[dict[str, Any]]:
+    """Generate balanced synthetic records for all quality grades."""
     records = []
     for grade in ["Excellent", "Good", "Average", "Weak", "Poor"]:
         for index in range(count_per_grade):
@@ -255,6 +261,7 @@ def synthetic_grade_records(count_per_grade: int) -> list[dict[str, Any]]:
 
 
 def build_dataset(input_dir: Path, output_path: Path, limit: int | None = None, seed: int = 42, synthetic_per_grade: int = 300) -> dict[str, Any]:
+    """Build the full pseudo-labeled CV quality JSONL dataset."""
     random.seed(seed)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     records: list[dict[str, Any]] = []
@@ -290,6 +297,7 @@ def build_dataset(input_dir: Path, output_path: Path, limit: int | None = None, 
 
 
 def main() -> None:
+    """CLI entry point for building the pseudo-labeled quality dataset."""
     parser = argparse.ArgumentParser(description="Build pseudo-labeled CV quality dataset")
     parser.add_argument("--input", type=Path, default=DEFAULT_INPUT)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)

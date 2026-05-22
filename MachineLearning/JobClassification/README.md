@@ -1,39 +1,90 @@
-# ML Job Classification Mini-Project
+# Job Classification
 
-## What It Does
+## What This Module Does
 
-Classifies job signals from cleaned SQL warehouse jobs.
+This objective classifies job posting signals from cleaned warehouse data.
 
 Implemented targets:
 
 ```text
-remote vs onsite
+remote vs onsite/non-remote
 full-time vs other schedule
 ```
 
-## Why It Exists
+Problem type:
 
-The project objective requires classification of job offers such as remote and full-time jobs. This helps analyze and automate job categorization.
+```text
+Supervised classification
+```
+
+Classification is used because the targets are labels.
+
+## Why It Was Built
+
+The project needs a classification objective. Remote work and full-time schedule are useful business categories in job-market analysis.
+
+The module answers:
+
+```text
+Can we classify remote work from job features?
+Can we classify full-time jobs from job features?
+```
 
 ## Official Data Source
+
+Objective-specific SQL view:
 
 ```text
 DW_DataJobs.dbo.vw_ml_classification_training
 ```
 
-## How It Works
+Central runner source:
 
-1. Load SQL warehouse jobs.
-2. Build text, categorical, and numeric features.
-3. Remove target-leaking fields.
-4. Train Logistic Regression and SGD candidates.
-5. Select best model by macro F1.
+```text
+DW_DataJobs.dbo.vw_ml_jobs
+```
 
-The implementation is centralized in:
+## Implementation
+
+Main implementation:
 
 ```text
 MachineLearning/SharedML/src/train_ml_objectives.py
-Backend/TalentBridgeAPI/scripts/train_ml_objectives.py
+```
+
+Relevant functions:
+
+```text
+train_remote_classifier
+train_full_time_classifier
+train_classifier
+classification_metrics
+```
+
+## How It Works
+
+```text
+load cleaned SQL rows
+-> prepare reusable feature columns
+-> remove target-leaking features
+-> split train/test data
+-> train candidate classifiers
+-> evaluate accuracy, macro F1, weighted F1
+-> select best model by macro F1
+-> save model artifacts
+```
+
+Candidate classifiers:
+
+```text
+LogisticRegression
+SGDClassifier with log-loss and elasticnet penalty
+```
+
+Why target leakage is removed:
+
+```text
+A model should not learn the answer from a field that directly contains the target. For example, full-time classification excludes schedule_primary and is_full_time from features.
 ```
 
 ## Latest SQL-Based Metrics
@@ -54,6 +105,12 @@ Macro F1: 0.6230
 Weighted F1: 0.7509
 ```
 
+Metric interpretation:
+
+- accuracy shows global correctness
+- macro F1 is important when classes are imbalanced
+- weighted F1 accounts for class frequency
+
 ## Artifacts
 
 ```text
@@ -62,13 +119,19 @@ Artifacts/models/ml/full_time_classifier_model.pkl
 Artifacts/reports/ml/ml_objectives_metrics.json
 ```
 
-If old classifier artifacts exist from earlier iterations, they are legacy outputs; the current final classifiers are the remote and full-time artifacts above.
+If old classifier artifacts exist from earlier iterations, they are legacy outputs. The current final classifiers are the remote and full-time artifacts above.
 
-## Teacher Validation Checklist
+## Run
+
+```bash
+cd Backend/TalentBridgeAPI
+python scripts/train_ml_objectives.py --source sql --max-rows 60000 --sample-size 24000
+```
+
+## Validation Checklist
 
 - Uses cleaned SQL views.
-- Implementation path is documented.
-- Has two classification targets.
+- Implements two classification targets.
 - Avoids target leakage.
-- Reports accuracy, macro F1, weighted F1.
+- Reports accuracy, macro F1, and weighted F1.
 - Saves trained classifier artifacts.

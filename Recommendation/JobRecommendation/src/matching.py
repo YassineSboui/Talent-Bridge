@@ -80,6 +80,8 @@ LOW_SIGNAL_SKILLS = {
 
 @dataclass
 class CandidateProfile:
+    """Normalized candidate profile used by the matching engine."""
+
     name: str | None
     email: str | None
     target_role: str | None
@@ -500,6 +502,7 @@ def infer_years_of_experience(values: list[str] | tuple[str, ...] | None) -> flo
 
 
 def infer_candidate_seniority(years: float | None) -> str | None:
+    """Convert years of experience into a coarse candidate seniority label."""
     if years is None:
         return None
     if years < 1:
@@ -514,10 +517,12 @@ def infer_candidate_seniority(years: float | None) -> str | None:
 
 
 def _first(values: list[str] | tuple[str, ...] | None) -> str | None:
+    """Return the first extracted value from a list-like field."""
     return values[0] if values else None
 
 
 def _number_or_none(value: Any) -> float | None:
+    """Convert a value to float when possible, otherwise return None."""
     if value is None:
         return None
     try:
@@ -527,6 +532,7 @@ def _number_or_none(value: Any) -> float | None:
 
 
 def _sql_row_to_dict(columns: list[str], row: Any) -> dict[str, Any]:
+    """Convert a pyodbc SQL row into a JSON-friendly dictionary."""
     result = {}
     for column, value in zip(columns, row):
         if hasattr(value, "isoformat"):

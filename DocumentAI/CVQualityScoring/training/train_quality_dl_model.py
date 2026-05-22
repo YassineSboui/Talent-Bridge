@@ -37,6 +37,7 @@ DEFAULT_REPORT_DIR = REPO_ROOT / "Artifacts" / "reports" / "document_ai"
 
 
 def set_seed(seed: int) -> None:
+    """Seed Python, NumPy, and PyTorch for reproducible DL training."""
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -45,6 +46,7 @@ def set_seed(seed: int) -> None:
 
 
 def load_records(dataset_path: Path) -> list[dict]:
+    """Load pseudo-labeled records that contain text and numeric target scores."""
     records = []
     with dataset_path.open("r", encoding="utf-8") as handle:
         for line in handle:
@@ -59,6 +61,7 @@ def load_records(dataset_path: Path) -> list[dict]:
 
 
 def numeric_matrix(records: list[dict]) -> np.ndarray:
+    """Convert CV feature dictionaries into an ordered numeric matrix."""
     matrix = []
     for record in records:
         features = record.get("features", {})
@@ -67,6 +70,7 @@ def numeric_matrix(records: list[dict]) -> np.ndarray:
 
 
 def build_inputs(vectorizer: TfidfVectorizer, scaler: StandardScaler, records: list[dict], *, fit: bool = False) -> np.ndarray:
+    """Build combined TF-IDF text and scaled numeric feature inputs."""
     texts = [record.get("text", "") for record in records]
     numeric = numeric_matrix(records)
     if fit:
@@ -79,11 +83,13 @@ def build_inputs(vectorizer: TfidfVectorizer, scaler: StandardScaler, records: l
 
 
 def sample_weights(records: list[dict]) -> np.ndarray:
+    """Create inverse-frequency weights so each grade contributes fairly."""
     counts = Counter(record.get("grade") for record in records)
     return np.asarray([1.0 / max(counts.get(record.get("grade"), 1), 1) for record in records], dtype=np.float32) * len(records) / len(counts)
 
 
 def run_epoch(model, loader, criterion, optimizer, device: torch.device) -> float:
+    """Run one weighted training or validation epoch for the MLP."""
     model.train(optimizer is not None)
     total_loss = 0.0
     total = 0
@@ -105,6 +111,7 @@ def run_epoch(model, loader, criterion, optimizer, device: torch.device) -> floa
 
 
 def predict_scores(model, inputs: np.ndarray, device: torch.device) -> np.ndarray:
+    """Predict bounded 0-100 quality scores in batches."""
     model.eval()
     predictions = []
     with torch.no_grad():
@@ -115,6 +122,7 @@ def predict_scores(model, inputs: np.ndarray, device: torch.device) -> np.ndarra
 
 
 def evaluate(targets: np.ndarray, predictions: np.ndarray) -> dict:
+    """Compute regression and grade accuracy metrics for quality scores."""
     target_grades = [grade_from_score(score) for score in targets]
     predicted_grades = [grade_from_score(score) for score in predictions]
     return {
@@ -126,6 +134,7 @@ def evaluate(targets: np.ndarray, predictions: np.ndarray) -> dict:
 
 
 def write_preview(records: list[dict], targets: np.ndarray, predictions: np.ndarray, output_path: Path) -> None:
+    """Write a small CSV preview of target versus predicted quality scores."""
     with output_path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=["file_path", "category", "synthetic", "target_score", "predicted_score", "target_grade", "predicted_grade"])
         writer.writeheader()
@@ -144,6 +153,7 @@ def write_preview(records: list[dict], targets: np.ndarray, predictions: np.ndar
 
 
 def main() -> None:
+    """Train and persist the PyTorch CV quality scoring model."""
     parser = argparse.ArgumentParser(description="Train CV quality DL model")
     parser.add_argument("--dataset", type=Path, default=DEFAULT_DATASET)
     parser.add_argument("--model-dir", type=Path, default=DEFAULT_MODEL_DIR)
