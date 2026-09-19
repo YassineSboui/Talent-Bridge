@@ -34,6 +34,12 @@ Artifacts/platform_store.json
 .opencode/
 opencode.json
 
+# Local environment files (real secrets - never commit; see *.env.example)
+.env
+*.env
+!*.env.example
+!.env.example
+
 # OS files
 Thumbs.db
 Desktop.ini
